@@ -60,6 +60,7 @@ public class LFilePickerActivity extends AppCompatActivity {
     private ParamEntity mParamEntity;
     private LFileFilter mFilter;
     private boolean mIsAllSelected = false;
+    private boolean mClearData = true;
     private Menu mMenu;
     private PopupWindow pw;
     private String defultBackPath;
@@ -149,6 +150,7 @@ public class LFilePickerActivity extends AppCompatActivity {
     /**
      * 添加点击事件处理
      */
+    @SuppressLint("SetTextI18n")
     private void initListener() {
         // 返回目录上一级
         mTvBack.setOnClickListener(v -> {
@@ -170,13 +172,18 @@ public class LFilePickerActivity extends AppCompatActivity {
                     } else {
                         mListNumbers.add(mListFiles.get(position).getAbsolutePath());
                     }
-                    // 设置数量   demo 上传
-                    //todo 设置数量
-                    if (mListNumbers.size() != mListFiles.size()) {
-
-                    } else {
+                    //todo 设置数量(暂时没有分割出文件/文件夹子)
+                    mIsAllSelected = mListNumbers.size() == mListFiles.size();
+                    updateMenuTitle();
+                    if (mPathAdapter != null) {
+                        if (mListNumbers.size() == mListFiles.size()) {
+                            mPathAdapter.updateAllSelelcted(true);
+                        } else if (mListNumbers.size() <= 0) {
+                            mPathAdapter.updateAllSelelcted(false);
+                        }
 
                     }
+                    updateMenuTitle();
                     if (mParamEntity.getAddText() != null) {
                         mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
                     } else {
@@ -238,7 +245,10 @@ public class LFilePickerActivity extends AppCompatActivity {
         mRecylerView.scrollToPosition(0);
         setShowPath(mPath);
         //清除添加集合中数据
-        mListNumbers.clear();
+        if (mClearData) {
+            mListNumbers.clear();
+        }
+
         if (mParamEntity.getAddText() != null) {
             mBtnAddBook.setText(mParamEntity.getAddText());
         } else {
@@ -381,6 +391,8 @@ public class LFilePickerActivity extends AppCompatActivity {
 
     private void copyOrMoveFile(int mode) {
         if (mListNumbers != null) {
+            //todo  表示不清除内容
+            mClearData = false;
             copyOrMoveDialog(mode);
 
 
@@ -424,6 +436,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                                 }
                                 notityUI();
                             }
+                            mListNumbers.clear();
                         });
         snackbar
                 .getView()

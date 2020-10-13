@@ -30,12 +30,13 @@ public class LFilePicker {
     private int mRequestCode;
     private boolean mMutilyMode = true;
     private boolean mChooseMode = true;
+    private boolean mChooseBoxMode = true;
     private String mAddText;
     private int mIconStyle;
     private String[] mFileTypes;
     private String mNotFoundFiles;
     private int mMaxNum;
-    private String mStartPath,defultPath;
+    private String mStartPath, defultPath;
     private boolean mIsGreater = true;//是否大于
     private boolean mCreate = true, mDel = true, mMove = true, mReName = true, mCopy = true;
     private long mFileSize;
@@ -234,6 +235,7 @@ public class LFilePicker {
         this.defultPath = path;
         return this;
     }
+
     /**
      * 设置选择模式，true为文件选择模式，false为文件夹选择模式，默认为true
      *
@@ -242,6 +244,12 @@ public class LFilePicker {
      */
     public LFilePicker withChooseMode(boolean chooseMode) {
         this.mChooseMode = chooseMode;
+        return this;
+    }
+
+    @NotNull
+    public LFilePicker withChooseBoxMode(boolean chooseBoxMode) {
+        this.mChooseBoxMode = chooseBoxMode;
         return this;
     }
 
@@ -255,37 +263,42 @@ public class LFilePicker {
         this.mIsGreater = isGreater;
         return this;
     }
+
     @NotNull
     public LFilePicker withSetCreate(boolean create) {
         this.mCreate = create;
         return this;
     }
+
     /**
-     *  如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
+     * 如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
      */
     @NotNull
     public LFilePicker withSetReName(boolean reName) {
         this.mReName = reName;
         return this;
     }
+
     /**
-     *  如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
+     * 如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
      */
     @NotNull
     public LFilePicker withSetDel(boolean del) {
         this.mDel = del;
         return this;
     }
+
     /**
-     *  如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
+     * 如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
      */
     @NotNull
     public LFilePicker withSetCopy(boolean copy) {
         this.mCopy = copy;
         return this;
     }
+
     /**
-     *  如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
+     * 如果想要进行删除，修改，复制，粘贴的操作；需要设置多选模式
      */
     @NotNull
     public LFilePicker withSetMove(boolean move) {
@@ -351,6 +364,7 @@ public class LFilePicker {
         paramEntity.setNotFoundFiles(mNotFoundFiles);
         paramEntity.setMaxNum(mMaxNum);
         paramEntity.setChooseMode(mChooseMode);
+        paramEntity.setChooseBoxMode(mChooseBoxMode);
         paramEntity.setPath(mStartPath);
         paramEntity.setFileSize(mFileSize);
         paramEntity.setGreater(mIsGreater);
