@@ -170,7 +170,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                     } else {
                         mListNumbers.add(mListFiles.get(position).getAbsolutePath());
                     }
-                    // 设置数量   demo 上传 
+                    // 设置数量   demo 上传
                     //todo 设置数量
                     if (mListNumbers.size() != mListFiles.size()) {
 
