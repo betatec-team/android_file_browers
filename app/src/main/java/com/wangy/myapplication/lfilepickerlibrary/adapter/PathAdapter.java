@@ -43,14 +43,16 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
     private int mIconStyle;
     private boolean mIsGreater;
     private long mFileSize;
+    private boolean mMutilyBoxMode;
 
-    public PathAdapter(List<File> mListData, Context mContext, FileFilter mFileFilter, boolean mMutilyMode, boolean mIsGreater, long mFileSize) {
+    public PathAdapter(List<File> mListData, Context mContext, FileFilter mFileFilter, boolean mMutilyMode, boolean mMutilyBoxMode, boolean mIsGreater, long mFileSize) {
         this.mListData = mListData;
         this.mContext = mContext;
         this.mFileFilter = mFileFilter;
         this.mMutilyMode = mMutilyMode;
         this.mIsGreater = mIsGreater;
         this.mFileSize = mFileSize;
+        this.mMutilyBoxMode = mMutilyBoxMode;
         mCheckedFlags = new boolean[mListData.size()];
     }
 
@@ -73,7 +75,7 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
             updateFileIconStyle(holder.ivType);
             holder.tvName.setText(file.getName());
             holder.tvDetail.setText(mContext.getString(R.string.lfile_FileSize) + " " + FileUtils.getReadableFileSize(file.length()));
-            holder.cbChoose.setVisibility(View.VISIBLE);
+            holder.cbChoose.setVisibility(mMutilyMode ? View.VISIBLE : View.GONE);
         } else {
             updateFloaderIconStyle(holder.ivType);
             holder.tvName.setText(file.getName());
@@ -84,19 +86,18 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
             } else {
                 holder.tvDetail.setText(files.size() + " " + mContext.getString(R.string.lfile_LItem));
             }
-            holder.cbChoose.setVisibility(View.GONE);
+            holder.cbChoose.setVisibility(mMutilyBoxMode ? View.VISIBLE : View.GONE);
         }
-        if (!mMutilyMode) {
-            holder.cbChoose.setVisibility(View.GONE);
-        }
-        holder.layoutRoot.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (file.isFile()) {
-                    holder.cbChoose.setChecked(!holder.cbChoose.isChecked());
-                }
-                onItemClickListener.click(position);
+//        //todo  选中事件
+//        if (!mMutilyMode) {
+//            holder.cbChoose.setVisibility(View.GONE);
+//        }
+        holder.layoutRoot.setOnClickListener(v -> {
+
+            if (file.isFile() && mMutilyMode) {
+                holder.cbChoose.setChecked(!holder.cbChoose.isChecked());
             }
+            onItemClickListener.click(position);
         });
         holder.cbChoose.setOnClickListener(new View.OnClickListener() {
             @Override

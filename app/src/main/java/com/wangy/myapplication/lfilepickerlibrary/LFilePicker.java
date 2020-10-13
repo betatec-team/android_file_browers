@@ -30,7 +30,7 @@ public class LFilePicker {
     private int mRequestCode;
     private boolean mMutilyMode = true;
     private boolean mChooseMode = true;
-    private boolean mChooseBoxMode = true;
+    private boolean mMutilyBoxMode = true;
     private String mAddText;
     private int mIconStyle;
     private String[] mFileTypes;
@@ -248,8 +248,8 @@ public class LFilePicker {
     }
 
     @NotNull
-    public LFilePicker withChooseBoxMode(boolean chooseBoxMode) {
-        this.mChooseBoxMode = chooseBoxMode;
+    public LFilePicker withMutilyBoxMode(boolean mutilyBoxMode) {
+        this.mMutilyBoxMode = mutilyBoxMode;
         return this;
     }
 
@@ -364,7 +364,7 @@ public class LFilePicker {
         paramEntity.setNotFoundFiles(mNotFoundFiles);
         paramEntity.setMaxNum(mMaxNum);
         paramEntity.setChooseMode(mChooseMode);
-        paramEntity.setChooseBoxMode(mChooseBoxMode);
+        paramEntity.setMutilyBoxMode(mMutilyBoxMode);
         paramEntity.setPath(mStartPath);
         paramEntity.setFileSize(mFileSize);
         paramEntity.setGreater(mIsGreater);

@@ -92,7 +92,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         mTvPath.setText(mPath);
         mFilter = new LFileFilter(mParamEntity.getFileTypes());
         mListFiles = FileUtils.getFileList(mPath, mFilter, mParamEntity.isGreater(), mParamEntity.getFileSize());
-        mPathAdapter = new PathAdapter(mListFiles, this, mFilter, mParamEntity.isMutilyMode(), mParamEntity.isGreater(), mParamEntity.getFileSize());
+        mPathAdapter = new PathAdapter(mListFiles, this, mFilter, mParamEntity.isMutilyMode(), mParamEntity.isMutilyBoxMode(), mParamEntity.isGreater(), mParamEntity.getFileSize());
         mRecylerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mPathAdapter.setmIconStyle(mParamEntity.getIconStyle());
         mRecylerView.setAdapter(mPathAdapter);
@@ -136,7 +136,7 @@ public class LFilePickerActivity extends AppCompatActivity {
     }
 
     private void updateAddButton() {
-        if (!mParamEntity.isMutilyMode()) {
+        if (!mParamEntity.isMutilyMode() && !mParamEntity.isMutilyBoxMode()) {
             mBtnAddBook.setVisibility(View.GONE);
         }
         if (!mParamEntity.isChooseMode()) {
@@ -158,6 +158,44 @@ public class LFilePickerActivity extends AppCompatActivity {
         });
         mPathAdapter.setOnItemClickListener(position -> {
             if (mParamEntity.isMutilyMode()) {
+                if (mListFiles.get(position).isDirectory()) {
+                    //如果当前是目录，则进入继续查看目录
+                    chekInDirectory(position);
+                    mPathAdapter.updateAllSelelcted(false);
+                    mIsAllSelected = false;
+                    updateMenuTitle();
+                    mBtnAddBook.setText(getString(R.string.lfile_Selected));
+                } else {
+                    //如果已经选择则取消，否则添加进来
+                    if (mListNumbers.contains(mListFiles.get(position).getAbsolutePath())) {
+                        mListNumbers.remove(mListFiles.get(position).getAbsolutePath());
+                    } else {
+                        mListNumbers.add(mListFiles.get(position).getAbsolutePath());
+                    }
+                    //todo 设置数量(暂时没有分割出文件/文件夹子)
+                    mIsAllSelected = mListNumbers.size() == mListFiles.size();
+                    updateMenuTitle();
+                    if (mPathAdapter != null) {
+                        if (mListNumbers.size() == mListFiles.size()) {
+                            mPathAdapter.updateAllSelelcted(true);
+                        } else if (mListNumbers.size() <= 0) {
+                            mPathAdapter.updateAllSelelcted(false);
+                        }
+
+                    }
+                    updateMenuTitle();
+                    if (mParamEntity.getAddText() != null) {
+                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
+                    } else {
+                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + mListNumbers.size() + " )");
+                    }
+                    //先判断是否达到最大数量，如果数量达到上限提示，否则继续添加
+                    if (mParamEntity.getMaxNum() > 0 && mListNumbers.size() > mParamEntity.getMaxNum()) {
+                        Toast.makeText(LFilePickerActivity.this, R.string.lfile_OutSize, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            } else if (mParamEntity.isMutilyBoxMode()) {
                 if (mListFiles.get(position).isDirectory()) {
                     //如果当前是目录，则进入继续查看目录
                     chekInDirectory(position);
@@ -329,17 +367,15 @@ public class LFilePickerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_toolbar, menu);
         this.mMenu = menu;
-        updateOptionsMenu(menu);
+        updateOptionsMenu();
         return true;
     }
 
     /**
      * 更新选项菜单展示，如果是单选模式，不显示全选操作
-     *
-     * @param menu
      */
-    private void updateOptionsMenu(Menu menu) {
-        mMenu.findItem(R.id.action_selecteall_cancel).setVisible(mParamEntity.isMutilyMode());
+    private void updateOptionsMenu() {
+        mMenu.findItem(R.id.action_selecteall_cancel).setVisible(mParamEntity.isMutilyMode() | mParamEntity.isMutilyBoxMode());
         mMenu.findItem(R.id.action_selecte_create).setVisible(mParamEntity.isCreate());
         mMenu.findItem(R.id.action_selecte_rename).setVisible(mParamEntity.isReName());
         mMenu.findItem(R.id.action_selecte_del).setVisible(mParamEntity.isDel());

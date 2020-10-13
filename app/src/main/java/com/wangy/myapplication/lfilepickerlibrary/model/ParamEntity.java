@@ -30,14 +30,14 @@ public class ParamEntity implements Serializable {
     private boolean copy;
     private boolean move;
     private String defultPath;
-    private  boolean chooseBoxMode;
+    private  boolean mutilyBoxMode;
 
-    public boolean isChooseBoxMode() {
-        return chooseBoxMode;
+    public boolean isMutilyBoxMode() {
+        return mutilyBoxMode;
     }
 
-    public void setChooseBoxMode(boolean chooseBoxMode) {
-        this.chooseBoxMode = chooseBoxMode;
+    public void setMutilyBoxMode(boolean mutilyBoxMode) {
+        this.mutilyBoxMode = mutilyBoxMode;
     }
 
     public String getDefultPath() {
