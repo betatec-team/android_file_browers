@@ -99,6 +99,7 @@ public class FileUtils {
         }
         return list;
     }
+
     /**
      * 创建文件/文件夹
      */
@@ -121,6 +122,7 @@ public class FileUtils {
             ToastUtils.showShort(file.exists() ? "您要创建的文件夹已经存在！" : file.mkdirs() ? "文件夹创建成功！" : "文件创建失败！");
         }
     }
+
     /**
      * 重新命名文件
      */
@@ -172,6 +174,14 @@ public class FileUtils {
                     copyFolder(dir1, dir2);
                 }
             }
+        } else {
+            File file = new File(target, resourceFile.getName());
+            if (file.exists()){
+                ToastUtils.showShort("请不要将同名称的文件放置到该目录下！");
+            }else {
+                file.mkdirs();
+            }
+
         }
 
 
@@ -198,7 +208,7 @@ public class FileUtils {
         // 大文件 可将 1024 * 2 改大一些，但是 并不是越大就越快
         byte[] bytes = new byte[1024 * 2];
         int len;
-        while ( (len = inputStream.read(bytes)) != -1 ) bufferedOutputStream.write(bytes, 0, len);
+        while ((len = inputStream.read(bytes)) != -1) bufferedOutputStream.write(bytes, 0, len);
         // 刷新输出缓冲流
         bufferedOutputStream.flush();
         //关闭流
@@ -210,6 +220,7 @@ public class FileUtils {
         System.out.println("耗时：" + (end - start) / 1000 + " s");
 
     }
+
     /**
      * 删除文件
      */

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ import com.wangy.myapplication.lfilepickerlibrary.widget.EmptyRecyclerView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -51,13 +53,14 @@ public class LFilePickerActivity extends AppCompatActivity {
     private EmptyRecyclerView mRecylerView;
     private View mEmptyView;
     private TextView mTvPath, mTvBack;
-    private Button mBtnAddBook;
+    public Button mBtnAddBook;
     private String mPath;
     private List<File> mListFiles;
-    private ArrayList<String> mListNumbers = new ArrayList<String>();//存放选中条目的数据地址
+    public ArrayList<String> mListNumbers = new ArrayList<String>();//存放选中文件条目的数据地址
+    public ArrayList<String> mListBoxNumbers = new ArrayList<String>();//存放选中文件夹条目的数据地址
     private PathAdapter mPathAdapter;
     private Toolbar mToolbar;
-    private ParamEntity mParamEntity;
+    public ParamEntity mParamEntity;
     private LFileFilter mFilter;
     private boolean mIsAllSelected = false;
     private boolean mClearData = true;
@@ -172,23 +175,18 @@ public class LFilePickerActivity extends AppCompatActivity {
                     } else {
                         mListNumbers.add(mListFiles.get(position).getAbsolutePath());
                     }
-                    //todo 设置数量(暂时没有分割出文件/文件夹子)
                     mIsAllSelected = mListNumbers.size() == mListFiles.size();
                     updateMenuTitle();
+                    getBoxData();
                     if (mPathAdapter != null) {
                         if (mListNumbers.size() == mListFiles.size()) {
                             mPathAdapter.updateAllSelelcted(true);
-                        } else if (mListNumbers.size() <= 0) {
+                        } else if (mListNumbers.size() <= 0 && mListBoxNumbers.size() <= 0) {
                             mPathAdapter.updateAllSelelcted(false);
                         }
 
                     }
                     updateMenuTitle();
-                    if (mParamEntity.getAddText() != null) {
-                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
-                    } else {
-                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + mListNumbers.size() + " )");
-                    }
                     //先判断是否达到最大数量，如果数量达到上限提示，否则继续添加
                     if (mParamEntity.getMaxNum() > 0 && mListNumbers.size() > mParamEntity.getMaxNum()) {
                         Toast.makeText(LFilePickerActivity.this, R.string.lfile_OutSize, Toast.LENGTH_SHORT).show();
@@ -210,7 +208,6 @@ public class LFilePickerActivity extends AppCompatActivity {
                     } else {
                         mListNumbers.add(mListFiles.get(position).getAbsolutePath());
                     }
-                    //todo 设置数量(暂时没有分割出文件/文件夹子)
                     mIsAllSelected = mListNumbers.size() == mListFiles.size();
                     updateMenuTitle();
                     if (mPathAdapter != null) {
@@ -222,11 +219,11 @@ public class LFilePickerActivity extends AppCompatActivity {
 
                     }
                     updateMenuTitle();
-                    if (mParamEntity.getAddText() != null) {
-                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
-                    } else {
-                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + mListNumbers.size() + " )");
-                    }
+//                    if (mParamEntity.getAddText() != null) {
+//                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
+//                    } else {
+//                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + mListNumbers.size() + " )");
+//                    }
                     //先判断是否达到最大数量，如果数量达到上限提示，否则继续添加
                     if (mParamEntity.getMaxNum() > 0 && mListNumbers.size() > mParamEntity.getMaxNum()) {
                         Toast.makeText(LFilePickerActivity.this, R.string.lfile_OutSize, Toast.LENGTH_SHORT).show();
@@ -286,11 +283,21 @@ public class LFilePickerActivity extends AppCompatActivity {
         if (mClearData) {
             mListNumbers.clear();
         }
-
         if (mParamEntity.getAddText() != null) {
             mBtnAddBook.setText(mParamEntity.getAddText());
         } else {
             mBtnAddBook.setText(R.string.lfile_Selected);
+        }
+    }
+
+    private void getBoxData() {
+        if (mPathAdapter != null) {
+            LinkedList<Integer> fileBoxList = mPathAdapter.fileBoxList;
+            mListBoxNumbers.clear();
+            for (int i = 0; i < fileBoxList.size(); i++) {
+                File file = mListFiles.get(fileBoxList.get(i));
+                mListBoxNumbers.add(file.getPath());
+            }
         }
     }
 
@@ -383,6 +390,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         mMenu.findItem(R.id.action_selecte_move).setVisible(mParamEntity.isMove());
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_selecteall_cancel) {
@@ -394,11 +402,13 @@ public class LFilePickerActivity extends AppCompatActivity {
                     //不包含再添加，避免重复添加
                     if (!mListFile.isDirectory() && !mListNumbers.contains(mListFile.getAbsolutePath())) {
                         mListNumbers.add(mListFile.getAbsolutePath());
+                    } else if (mListFile.isDirectory()&&!mListBoxNumbers.contains(mListFile.getAbsolutePath())) {
+                        mListBoxNumbers.add(mListFile.getAbsolutePath());
                     }
                     if (mParamEntity.getAddText() != null) {
-                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + mListNumbers.size() + " )");
+                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
                     } else {
-                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + mListNumbers.size() + " )");
+                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
                     }
                 }
             } else {
@@ -409,13 +419,14 @@ public class LFilePickerActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.action_selecte_create) {
             create();
         } else if (item.getItemId() == R.id.action_selecte_rename) {
+
             reName();
 
         } else if (item.getItemId() == R.id.action_selecte_del) {
             delFile();
 
         } else if (item.getItemId() == R.id.action_selecte_copy) {
-            //todo 复制的操作,暂时只有文件的复制，没有添加对文件夹的操作
+
             copyOrMoveFile(0);
 
         } else if (item.getItemId() == R.id.action_selecte_move) {
@@ -426,12 +437,10 @@ public class LFilePickerActivity extends AppCompatActivity {
     }
 
     private void copyOrMoveFile(int mode) {
-        if (mListNumbers != null) {
-            //todo  表示不清除内容
+        getBoxData();
+        if (mListNumbers != null | mListBoxNumbers != null) {
             mClearData = false;
             copyOrMoveDialog(mode);
-
-
         } else {
             // 提示
             ToastUtils.showShort("您选中的条目有" + (mListNumbers == null ? 0 : mListNumbers.size()) + "条,不符合修改名称的条件！");
@@ -441,7 +450,7 @@ public class LFilePickerActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void copyOrMoveDialog(int mode) {
         Snackbar snackbar =
-                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? "复制" : "移动") + "：0个文件夹，" + mListNumbers.size() + "个文件", BaseTransientBottomBar.LENGTH_INDEFINITE)
+                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? "复制：" : "移动：") + mListBoxNumbers.size() + "个文件夹，" + mListNumbers.size() + "个文件", BaseTransientBottomBar.LENGTH_INDEFINITE)
                         .setAction("粘贴", v -> {
                             if (mListNumbers != null) {
                                 //1.判断复制的文件是否是当前的路径
@@ -461,8 +470,24 @@ public class LFilePickerActivity extends AppCompatActivity {
                                         e.printStackTrace();
                                     }
                                 }
+                                // 将文件夹复制到当前的位置
+                                for (String path : mListBoxNumbers) {
+                                    try {
+                                        File file = new File(path);
+                                        FileUtils.copyFolder(path, new File(mPath).getPath());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
                                 if (mode == 1) {
                                     for (String path : mListNumbers) {
+                                        try {
+                                            FileUtils.deleteDir(path);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    for (String path : mListBoxNumbers) {
                                         try {
                                             FileUtils.deleteDir(path);
                                         } catch (Exception e) {
@@ -473,6 +498,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                                 notityUI();
                             }
                             mListNumbers.clear();
+                            mListBoxNumbers.clear();
                         });
         snackbar
                 .getView()
@@ -483,17 +509,26 @@ public class LFilePickerActivity extends AppCompatActivity {
     }
 
     private void delFile() {
-        if (mListNumbers != null) {
-            AlertDialogUtils.showDialog(this, null, "您确定要删除这些文件吗吗？", null, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+        getBoxData();
+        if (mListNumbers != null | mListBoxNumbers != null) {
+            AlertDialogUtils.showDialog(this, null, "您确定要删除这些文件吗吗？", null, (dialog, which) -> {
+                // 删除文件夹
+                if (mListBoxNumbers != null) {
+                    for (String path : mListBoxNumbers) {
+                        FileUtils.deleteDir(path);
+                    }
+                    mListBoxNumbers.clear();
+                }
+                if (mListNumbers != null) {
                     for (String path : mListNumbers) {
                         FileUtils.deleteDir(path);
                     }
-                    // 刷新界面
-                    notityUI();
-                    dialog.dismiss();
+                    mListNumbers.clear();
                 }
+
+                // 刷新界面
+                notityUI();
+                dialog.dismiss();
             });
         } else {
             // 提示
@@ -506,8 +541,12 @@ public class LFilePickerActivity extends AppCompatActivity {
      * 重命名的方法
      */
     private void reName() {
-        if (mListNumbers != null && mListNumbers.size() == 1) {
+        getBoxData();
+        if (mListNumbers != null && mListNumbers.size() == 1 && (mListBoxNumbers == null | mListBoxNumbers.size() <= 0)) {
             File file = new File(mListNumbers.get(0));
+            retNameAlertDialog(file.getName(), file.getParent());
+        } else if (mListBoxNumbers != null && mListBoxNumbers.size() == 1 && (mListNumbers == null | mListNumbers.size() <= 0)) {
+            File file = new File(mListBoxNumbers.get(0));
             retNameAlertDialog(file.getName(), file.getParent());
         } else {
             // 提示

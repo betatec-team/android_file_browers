@@ -1,5 +1,6 @@
 package com.wangy.myapplication.lfilepickerlibrary.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,17 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wangy.myapplication.R;
+import com.wangy.myapplication.lfilepickerlibrary.ui.LFilePickerActivity;
 import com.wangy.myapplication.lfilepickerlibrary.utils.Constant;
 import com.wangy.myapplication.lfilepickerlibrary.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import static com.blankj.utilcode.util.StringUtils.getString;
 
 /**
  * 作者：Leon
@@ -35,7 +41,7 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
 
     private final String TAG = "FilePickerLeon";
     private List<File> mListData;
-    private Context mContext;
+    private LFilePickerActivity activity;
     public OnItemClickListener onItemClickListener;
     private FileFilter mFileFilter;
     private boolean[] mCheckedFlags;
@@ -44,10 +50,12 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
     private boolean mIsGreater;
     private long mFileSize;
     private boolean mMutilyBoxMode;
+    public LinkedList<Integer> fileBoxList = new LinkedList();
+    public ArrayList<String> mListNumbers = new ArrayList<String>();//存放选中文件条目的数据地址
 
-    public PathAdapter(List<File> mListData, Context mContext, FileFilter mFileFilter, boolean mMutilyMode, boolean mMutilyBoxMode, boolean mIsGreater, long mFileSize) {
+    public PathAdapter(List<File> mListData, LFilePickerActivity activity, FileFilter mFileFilter, boolean mMutilyMode, boolean mMutilyBoxMode, boolean mIsGreater, long mFileSize) {
         this.mListData = mListData;
-        this.mContext = mContext;
+        this.activity = activity;
         this.mFileFilter = mFileFilter;
         this.mMutilyMode = mMutilyMode;
         this.mIsGreater = mIsGreater;
@@ -58,7 +66,7 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
 
     @Override
     public PathViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = View.inflate(mContext, R.layout.lfile_listitem, null);
+        View view = View.inflate(activity, R.layout.lfile_listitem, null);
         PathViewHolder pathViewHolder = new PathViewHolder(view);
         return pathViewHolder;
     }
@@ -74,7 +82,7 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
         if (file.isFile()) {
             updateFileIconStyle(holder.ivType);
             holder.tvName.setText(file.getName());
-            holder.tvDetail.setText(mContext.getString(R.string.lfile_FileSize) + " " + FileUtils.getReadableFileSize(file.length()));
+            holder.tvDetail.setText(activity.getString(R.string.lfile_FileSize) + " " + FileUtils.getReadableFileSize(file.length()));
             holder.cbChoose.setVisibility(mMutilyMode ? View.VISIBLE : View.GONE);
         } else {
             updateFloaderIconStyle(holder.ivType);
@@ -82,38 +90,59 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
             //文件大小过滤
             List files = FileUtils.getFileList(file.getAbsolutePath(), mFileFilter, mIsGreater, mFileSize);
             if (files == null) {
-                holder.tvDetail.setText("0 " + mContext.getString(R.string.lfile_LItem));
+                holder.tvDetail.setText("0 " + activity.getString(R.string.lfile_LItem));
             } else {
-                holder.tvDetail.setText(files.size() + " " + mContext.getString(R.string.lfile_LItem));
+                holder.tvDetail.setText(files.size() + " " + activity.getString(R.string.lfile_LItem));
             }
             holder.cbChoose.setVisibility(mMutilyBoxMode ? View.VISIBLE : View.GONE);
         }
-//        //todo  选中事件
-//        if (!mMutilyMode) {
-//            holder.cbChoose.setVisibility(View.GONE);
-//        }
         holder.layoutRoot.setOnClickListener(v -> {
-
             if (file.isFile() && mMutilyMode) {
                 holder.cbChoose.setChecked(!holder.cbChoose.isChecked());
             }
             onItemClickListener.click(position);
         });
-        holder.cbChoose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.cbChoose.setOnClickListener(v -> {
+            if (file.isFile() && mMutilyMode) {
                 //同步复选框和外部布局点击的处理
                 onItemClickListener.click(position);
             }
+
         });
         holder.cbChoose.setOnCheckedChangeListener(null);//先设置一次CheckBox的选中监听器，传入参数null
         holder.cbChoose.setChecked(mCheckedFlags[position]);//用数组中的值设置CheckBox的选中状态
         //再设置一次CheckBox的选中监听器，当CheckBox的选中状态发生改变时，把改变后的状态储存在数组中
-        holder.cbChoose.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mCheckedFlags[position] = b;
+        holder.cbChoose.setOnCheckedChangeListener((compoundButton, check) -> {
+
+            if (file.isDirectory() && mMutilyBoxMode) {
+
+                if (check) {
+                    fileBoxList.add(position);
+                } else {
+                    for (int i = 0; i < fileBoxList.size(); i++) {
+                        if (position == fileBoxList.get(i)) {
+                            fileBoxList.remove(i);
+                        }
+                    }
+                }
+            } else if (file.isFile() && mMutilyMode) {
+                if (mListNumbers.contains(mListData.get(position).getAbsolutePath())) {
+                    mListNumbers.remove(mListData.get(position).getAbsolutePath());
+                } else {
+                    mListNumbers.add(mListData.get(position).getAbsolutePath());
+                }
             }
+            mCheckedFlags[position] = check;
+            // 设置动态监听
+            if (activity.mBtnAddBook != null) {
+                if (activity.mParamEntity.getAddText() != null) {
+                    activity.mBtnAddBook.setText(activity.mParamEntity.getAddText() + "( " + (mListNumbers.size() + fileBoxList.size()) + " )");
+                } else {
+                    activity.mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + (mListNumbers.size() + fileBoxList.size()) + " )");
+                }
+
+            }
+
         });
     }
 
@@ -174,7 +203,7 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
      * @param isAllSelected
      */
     public void updateAllSelelcted(boolean isAllSelected) {
-
+        // todo 此方法导致数据更新
         for (int i = 0; i < mCheckedFlags.length; i++) {
             mCheckedFlags[i] = isAllSelected;
         }

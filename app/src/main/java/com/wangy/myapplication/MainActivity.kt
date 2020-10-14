@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     fun open(view: View) {
         // 授权
 
