@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_selecteall_cancel"
+        android:icon="@drawable/check_normal"
+        android:title="全选"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_list"
+        android:icon="@drawable/list"
+        android:title="LIST"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_selecte_rename"
+        android:icon="@drawable/rename"
+        android:title="重命名"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_selecte_del"
+        android:icon="@drawable/del"
+        android:title="删除"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_selecte_copy"
+        android:icon="@drawable/copy"
+        android:title="复制"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_selecte_move"
+        android:icon="@drawable/move"
+        android:title="移动"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_selecte_create"
+        android:icon="@drawable/create"
+        android:title="创建"
+        app:showAsAction="always" />
+
+
+</menu>
