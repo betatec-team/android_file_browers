@@ -2,7 +2,9 @@ package com.wangy.new_lfilepicker.lfilepickerlibrary.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -19,11 +21,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -67,7 +71,10 @@ public class LFilePickerActivity extends AppCompatActivity {
     private PopupWindow pw;
     private String defultBackPath;
     private boolean LIST_SHOW = true;
+    int currentPostion = 0;
+    private File currentFiles;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mParamEntity = (ParamEntity) Objects.requireNonNull(getIntent().getExtras()).getSerializable("param");
@@ -75,9 +82,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         setTheme(mParamEntity.getTheme());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lfile_picker);
-
         defultBackPath = mParamEntity.getPath() == null ? mParamEntity.getDefultPath() == null ? Environment.getExternalStorageDirectory().getPath() : mParamEntity.getDefultPath() : mParamEntity.getPath();
-
         initView();
         setSupportActionBar(mToolbar);
         Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
@@ -88,25 +93,84 @@ public class LFilePickerActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.lfile_NotFoundPath, Toast.LENGTH_SHORT).show();
             return;
         }
-        mPath = mParamEntity.getPath();
-        if (StringUtils.isEmpty(mPath)) {
-            //如果没有指定路径，则使用默认路径
-            mPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        }
+        initData();
         mTvPath.setText(mPath);
         mFilter = new LFileFilter(mParamEntity.getFileTypes());
         mListFiles = FileUtils.getFileList(mPath, mFilter, mParamEntity.isGreater(), mParamEntity.getFileSize(), mParamEntity.getEndPath());
+        getCurrentPostion();
         mPathAdapter = new PathAdapter(mListFiles, this, mFilter, mParamEntity.isMutilyMode(), mParamEntity.isMutilyBoxMode(), mParamEntity.isGreater(), mParamEntity.getFileSize());
         if (mParamEntity.isListFifter()) {
             mRecylerView.setLayoutManager(new LinearLayoutManager(this));
         } else {
             mRecylerView.setLayoutManager(new GridLayoutManager(this, mParamEntity.getGrideFifterNum()));
         }
-
         mPathAdapter.setmIconStyle(mParamEntity.getIconStyle());
         mRecylerView.setAdapter(mPathAdapter);
+        moveToPosition(currentPostion, mRecylerView, new LinearLayoutManager(this));
         mRecylerView.setmEmptyView(mEmptyView);
         initListener();
+    }
+
+    private void moveToPosition(int currentPostion, RecyclerView mRecyclerVie, LinearLayoutManager manager) {
+        int firstItem = manager.findFirstVisibleItemPosition();
+        int lastItem = manager.findLastVisibleItemPosition();
+        if (currentPostion <= firstItem) {
+            mRecyclerVie.scrollToPosition(currentPostion);
+        } else if (currentPostion <= lastItem) {
+            int top = mRecyclerVie.getChildAt(currentPostion - firstItem).getTop();
+            mRecyclerVie.scrollBy(0, top);
+        } else {
+            mRecyclerVie.scrollToPosition(currentPostion);
+        }
+    }
+
+    private void getCurrentPostion() {
+        if (currentFiles != null && currentFiles.exists()) {
+            for (int i = 0; i < mListFiles.size(); i++) {
+                File file = mListFiles.get(i);
+                if (file.getPath().equals(currentFiles.getPath())) {
+                    // 判断路径
+                    currentPostion = i;
+                }
+
+            }
+        }
+
+    }
+
+    /**
+     * 设置默认的位置
+     */
+    private void initData() {
+        String currentPath = mParamEntity.getCurrentPath();
+        if (currentPath != null) {
+
+            currentFiles = new File(currentPath);
+            if (currentFiles.exists()) {
+                String parent = currentFiles.getParent();
+                // 获取当前的路径
+                String path = mParamEntity.getPath();
+                if (parent.equals(path)) {
+                    // 加载当前的路径
+                    mPath = path;
+                } else {
+                    mPath = parent;
+                }
+            } else {
+                mPath = mParamEntity.getPath();
+                if (StringUtils.isEmpty(mPath)) {
+                    //如果没有指定路径，则使用默认路径
+                    mPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                }
+            }
+        } else {
+            mPath = mParamEntity.getPath();
+            if (StringUtils.isEmpty(mPath)) {
+                //如果没有指定路径，则使用默认路径
+                mPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            }
+        }
+
     }
 
     /**
@@ -151,11 +215,15 @@ public class LFilePickerActivity extends AppCompatActivity {
         }
     }
 
+    boolean falage = true;
+
     /**
      * 添加点击事件处理
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint("SetTextI18n")
     private void initListener() {
+        Resources rescouse = getRes();
         // 返回目录上一级
         mTvBack.setOnClickListener(v -> {
             //
@@ -172,7 +240,9 @@ public class LFilePickerActivity extends AppCompatActivity {
                     mIsAllSelected = false;
                     updateMenuTitle();
                     mBtnAddBook.setText(getString(R.string.lfile_Selected));
-                    clearData();
+//              todo
+//                    if (falage)
+//                        clearData();
 
                 } else {
                     //如果已经选择则取消，否则添加进来
@@ -208,7 +278,9 @@ public class LFilePickerActivity extends AppCompatActivity {
                     mIsAllSelected = false;
                     updateMenuTitle();
                     mBtnAddBook.setText(getString(R.string.lfile_Selected));
-                    clearData();
+//                todo
+//                    if (falage)
+//                        clearData();
                 } else {
                     // 单选模式 文件
                     mListNumbers.add(mListFiles.get(position).getAbsolutePath());
@@ -265,7 +337,8 @@ public class LFilePickerActivity extends AppCompatActivity {
                     Toast.makeText(LFilePickerActivity.this, info, Toast.LENGTH_SHORT).show();
                 }
             } else if (mParamEntity.isChooseMode() && mListBoxNumbers.size() >= 1) {
-                Toast.makeText(LFilePickerActivity.this, "请不要选择文件夹", Toast.LENGTH_SHORT).show();
+                String string = rescouse.getString(R.string.not_filebox);
+                Toast.makeText(LFilePickerActivity.this, string, Toast.LENGTH_SHORT).show();
             } else {
                 //返回
                 chooseDone();
@@ -319,7 +392,7 @@ public class LFilePickerActivity extends AppCompatActivity {
 
 
     /**
-     * 点击进入目录
+     * 点击进入目录*
      *
      * @param position
      */
@@ -340,7 +413,9 @@ public class LFilePickerActivity extends AppCompatActivity {
     /**
      * 完成提交
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void chooseDone() {
+        Resources rescouse = getRes();
         //判断是否数量符合要求
         if (mParamEntity.isChooseMode()) {
             if (mParamEntity.getMaxNum() > 0 && mListNumbers.size() > mParamEntity.getMaxNum()) {
@@ -350,28 +425,32 @@ public class LFilePickerActivity extends AppCompatActivity {
         }
         if (mParamEntity.isChooseMode()) {
             if (mListNumbers.isEmpty()) {
-                ToastUtils.showShort("请选择导入的图书");
+                String string = rescouse.getString(R.string.lfile_NotFoundBooks);
+                ToastUtils.showShort(string);
                 return;
             } else {
                 // 判断是单选还是多选
                 if (!mParamEntity.isMutilyMode()) {
                     // 单选
                     if (mListNumbers.size() != 1) {
-                        ToastUtils.showShort("请选择一本图书");
+                        String string = rescouse.getString(R.string.selector_once);
+                        ToastUtils.showShort(string);
                         return;
                     }
                 }
             }
         } else {
             if (mListBoxNumbers.isEmpty()) {
-                ToastUtils.showShort("请选择导入的文件夹");
+                String string = rescouse.getString(R.string.selector_box);
+                ToastUtils.showShort(string);
                 return;
             } else {
                 // 判断是单选还是多选
                 if (!mParamEntity.isMutilyMode()) {
 
                     if (mListBoxNumbers.size() != 1) {
-                        ToastUtils.showShort("请勿选择多个文件夹");
+                        String string = rescouse.getString(R.string.no_selector_box);
+                        ToastUtils.showShort(string);
                         return;
                     }
                 }
@@ -379,8 +458,24 @@ public class LFilePickerActivity extends AppCompatActivity {
         }
         Intent intent = new Intent();
         if (mParamEntity.isChooseMode()) {
+            for (int i = 0; i < mListNumbers.size(); i++) {
+                String path = mListNumbers.get(i);
+                String parent = new File(path).getParent();
+                if (!parent.equals(mTvPath.getText())) {
+                    mListNumbers.remove(i);
+                }
+
+            }
             intent.putStringArrayListExtra("paths", mListNumbers);
         } else {
+            for (int i = 0; i < mListBoxNumbers.size(); i++) {
+                String path = mListBoxNumbers.get(i);
+                String parent = new File(path).getParent();
+                if (!parent.equals(mTvPath.getText())) {
+                    mListBoxNumbers.remove(i);
+                }
+
+            }
             intent.putStringArrayListExtra("paths", mListBoxNumbers);
         }
         intent.putExtra("path", mTvPath.getText().toString().trim());
@@ -401,6 +496,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         if (mParamEntity.getAddText() != null) {
             mBtnAddBook.setText(mParamEntity.getAddText());
         }
+
     }
 
     /**
@@ -432,7 +528,7 @@ public class LFilePickerActivity extends AppCompatActivity {
      */
     private void updateOptionsMenu() {
         mMenu.findItem(R.id.action_selecteall_cancel).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isMutilyBoxMode());
-        mMenu.findItem(R.id.action_selecte_create).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isCreate());
+        mMenu.findItem(R.id.action_selecte_create).setVisible( mParamEntity.isCreate());
         mMenu.findItem(R.id.action_selecte_rename).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isReName());
         mMenu.findItem(R.id.action_selecte_del).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isDel());
         mMenu.findItem(R.id.action_selecte_copy).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isCopy());
@@ -440,6 +536,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         mMenu.findItem(R.id.action_list).setVisible(mParamEntity.isShowFifter());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint("SetTextI18n")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -480,9 +577,7 @@ public class LFilePickerActivity extends AppCompatActivity {
             delFile();
 
         } else if (item.getItemId() == R.id.action_selecte_copy) {
-
             copyOrMoveFile(0);
-
         } else if (item.getItemId() == R.id.action_selecte_move) {
             copyOrMoveFile(1);
 
@@ -499,29 +594,45 @@ public class LFilePickerActivity extends AppCompatActivity {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void copyOrMoveFile(int mode) {
+        Resources rescouse = getRes();
         getBoxData();
         if (mListNumbers != null | mListBoxNumbers != null) {
             mClearData = false;
             copyOrMoveDialog(mode);
         } else {
             // 提示
-            ToastUtils.showShort("您选中的条目有" + (mListNumbers == null ? 0 : mListNumbers.size()) + "条,不符合修改名称的条件！");
+
+            String youCheck = rescouse.getString(R.string.you_check);
+            String youCheckEnd = rescouse.getString(R.string.you_check_end);
+            ToastUtils.showShort(youCheck + (mListNumbers == null ? 0 : mListNumbers.size()) + youCheckEnd);
         }
     }
 
+    ArrayList<String> mNewListBoxNumbers;
+    ArrayList<String> mNewListNumbers;
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint("SetTextI18n")
     private void copyOrMoveDialog(int mode) {
-        ArrayList<String> mNewListBoxNumbers = mListBoxNumbers;
-        ArrayList<String> mNewListNumbers = mListNumbers;
+        Resources rescouse = getRes();
+        mNewListBoxNumbers = mListBoxNumbers;
+        mNewListNumbers = mListNumbers;
+        falage = falage;
+        String copy = rescouse.getString(R.string.copy);
+        String move = rescouse.getString(R.string.move);
         Snackbar snackbar =
-                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? "复制：" : "移动：") + mNewListBoxNumbers.size() + "个文件夹，" + mNewListNumbers.size() + "个文件", BaseTransientBottomBar.LENGTH_INDEFINITE)
-                        .setAction("粘贴", v -> {
+                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? copy + "：" : move + "：") + mNewListBoxNumbers.size() +
+                                rescouse.getString(R.string.file_box_num) + "，" + mNewListNumbers.size() + rescouse.getString(R.string.file_num),
+                        BaseTransientBottomBar.LENGTH_INDEFINITE)
+                        .setAction(copy, v -> {
+                            falage = true;
                             if (mNewListNumbers != null) {
                                 //1.判断复制的文件是否是当前的路径
                                 for (String path : mNewListNumbers) {
                                     if (mPath.equals(new File(path).getAbsolutePath())) {
-                                        ToastUtils.showShort("不可以将当前的文件/文件夹复制在当前的位置上！");
+                                        ToastUtils.showShort(rescouse.getString(R.string.donot_worry));
                                         return;
                                     }
 
@@ -538,7 +649,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                                 // 将文件夹复制到当前的位置
                                 for (String path : mNewListBoxNumbers) {
                                     try {
-                                        FileUtils.copyFolder(path, new File(mPath).getPath());
+                                        FileUtils.copyFolder(this, path, new File(mPath).getPath(), mParamEntity.getLocacalLanguage());
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -563,19 +674,20 @@ public class LFilePickerActivity extends AppCompatActivity {
                             }
                             clearData();
                         });
-        snackbar
-                .getView()
-                .setBackgroundColor(getResources().getColor(android.R.color.white));
-        snackbar.setTextColor(getResources().getColor(android.R.color.black));
+        snackbar.getView()
+                .setBackgroundColor(rescouse.getColor(android.R.color.white));
+        snackbar.setTextColor(rescouse.getColor(android.R.color.black));
         snackbar.show();
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint("SetTextI18n")
     private void delFile() {
+        Resources rescouse = getRes();
         getBoxData();
         if (mListNumbers.size() > 0 | mListBoxNumbers.size() > 0) {
-            AlertDialogUtils.showDialog(this, null, "您确定要删除这些文件吗吗？", null, (dialog, which) -> {
+            AlertDialogUtils.showDialog(this, null, rescouse.getString(R.string.delete_all), null, (dialog, which) -> {
                 // 删除文件夹
                 if (mListBoxNumbers != null) {
                     for (String path : mListBoxNumbers) {
@@ -602,7 +714,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                 dialog.dismiss();
             });
         } else {
-            ToastUtils.showShort("您选中的条目有 0 条,不符合删除的条件！");
+            ToastUtils.showShort(rescouse.getString(R.string.check_zero));
         }
 
 
@@ -611,7 +723,9 @@ public class LFilePickerActivity extends AppCompatActivity {
     /**
      * 重命名的方法
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void reName() {
+        Resources rescouse = getRes();
         getBoxData();
         if (mListNumbers != null && mListNumbers.size() == 1 && (mListBoxNumbers == null | mListBoxNumbers.size() <= 0)) {
             File file = new File(mListNumbers.get(0));
@@ -624,7 +738,7 @@ public class LFilePickerActivity extends AppCompatActivity {
             } else {
                 // 提示
                 assert mListBoxNumbers != null;
-                ToastUtils.showShort("您选中的条目有" + (mListNumbers.size() + mListBoxNumbers.size()) + "条,不符合修改名称的条件！");
+                ToastUtils.showShort(rescouse.getString(R.string.you_check) + (mListNumbers.size() + mListBoxNumbers.size()) + rescouse.getString(R.string.update_name_end));
             }
         }
     }
@@ -635,21 +749,25 @@ public class LFilePickerActivity extends AppCompatActivity {
      * @param texts 名称
      * @param path  路径
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint("SetTextI18n")
     private void retNameAlertDialog(final String texts, final String path) {
         @SuppressLint("InflateParams")
+        Resources rescouse = getRes();
         View view = LayoutInflater.from(this).inflate(R.layout.itaam_rename, null);
         final EditText etReName = view.findViewById(R.id.et_iteam_rename);
         etReName.setText(texts);
         AlertDialogUtils.showDialog(this, null, null, view, (dialog, which) -> {
             String reName = etReName.getText().toString().trim();
             if (texts.equals(reName)) {
-                LogUtils.d("当前文件名称没有修改");
+                LogUtils.d(rescouse
+                        .getString(R.string.update_name_error));
             } else {
                 // 更改名称
                 FileUtils.reName(new File(path, texts), new File(path, reName));
                 // 判断当前的文件是否存在
-                LogUtils.d("当前文件名称已经修改");
+                LogUtils.d(rescouse
+                        .getString(R.string.update_name_success));
                 if (mParamEntity.getAddText() != null) {
                     mBtnAddBook.setText(mParamEntity.getAddText() + "( " + 0 + " )");
                 } else {
@@ -667,6 +785,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @SuppressLint({"InflateParams", "RtlHardcoded"})
     private void create() {
         if (pw != null && pw.isShowing()) {
@@ -684,7 +803,11 @@ public class LFilePickerActivity extends AppCompatActivity {
             // 创建文件夹的操作
             tvCreateFileBox.setOnClickListener(v -> showCorrespondingDialog("fileBox"));
             pw.setContentView(view);
-            pw.setTouchable(true);
+            // 点击外部可以消失
+            pw.setOutsideTouchable(true);
+            pw.setFocusable(true);
+            // 点击外部不可以消失
+//            pw.setTouchable(true);
             pw.showAtLocation(LayoutInflater.from(LFilePickerActivity.this).inflate(R.layout.activity_lfile_picker, null, false), Gravity.RIGHT, 0, -125);
 
         }
@@ -695,25 +818,29 @@ public class LFilePickerActivity extends AppCompatActivity {
      *
      * @param type 传递文件（“file”）或者是文件夹（“fileBox”），弹窗显示
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void showCorrespondingDialog(final String type) {
+        Resources rescouse = getRes();
         if (pw != null && pw.isShowing()) pw.dismiss();
         final int types = type.equals("file") ? 1 : 2;
         AlertDialog.Builder dialog = new AlertDialog.Builder(LFilePickerActivity.this);
-        dialog.setTitle("提示");
+        dialog.setTitle(rescouse.getString(R.string.tips));
         View view = LayoutInflater.from(this).inflate(R.layout.iteam_create_file_filebox, null);
         dialog.setView(view);
         EditText etCreate = view.findViewById(R.id.et_iteam_create);
-        etCreate.setHint(types == 1 ? "请输入您要创建的文件名称" : "请输入您要创建的文件夹名称");
+        etCreate.setHint(types == 1 ? rescouse.getString(R.string.create_file) : rescouse.getString(R.string.create_file));
         dialog.setCancelable(false);
-        dialog.setNegativeButton("取消", (dialog12, which) -> dialog12.dismiss());
-        dialog.setPositiveButton("确定", (dialog1, which) -> {
+        dialog.setNegativeButton(rescouse.getString(R.string.cancel), (dialog12, which) -> dialog12.dismiss());
+        dialog.setPositiveButton(rescouse.getString(R.string.lfile_OK), (dialog1, which) -> {
             // 创建文件/ 文件夹的方法
             String fileOrBoxName = etCreate.getText().toString().trim();
             if (fileOrBoxName.isEmpty()) {
-                ToastUtils.showShort("请重新确认输入内容！");
+                ToastUtils.showShort(rescouse.getString(R.string.inout_str));
             } else {
                 dialog1.dismiss();
-                FileUtils.createFile(mPath, fileOrBoxName, types);
+                FileUtils.createFile(this, mPath, fileOrBoxName, types, mParamEntity.getLocacalLanguage());
+                //todo  清空选中
+
                 notityUI();
             }
         });
@@ -742,5 +869,19 @@ public class LFilePickerActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public Resources getRes() {
+        Resources rescouse = getResources();
+//        if (mParamEntity.getLocacalLanguage() !=null){
+//            Configuration config = rescouse.getConfiguration();
+//            DisplayMetrics dm = rescouse.getDisplayMetrics();
+//            config.setLocale(mParamEntity.getLocacalLanguage());
+//            rescouse.updateConfiguration(config, dm);
+//        }
+
+        return rescouse;
+
     }
 }

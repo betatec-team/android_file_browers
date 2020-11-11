@@ -6,6 +6,8 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.wangy.new_lfilepicker.R;
+
 public class AlertDialogUtils {
     public synchronized static void showDialog(Activity activiity, String title, String message, View view, DialogInterface.OnClickListener... dialogListener) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(activiity);
@@ -14,16 +16,16 @@ public class AlertDialogUtils {
         if (view!=null){
             dialog.setView(view);
         }
-        dialog.setPositiveButton("确定", dialogListener[0]);
+        dialog.setPositiveButton(activiity.getResources().getString(R.string.lfile_OK), dialogListener[0]);
         if (dialogListener.length <= 1 ){
-            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            dialog.setNegativeButton(activiity.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
         }else {
-            dialog.setNegativeButton("取消", dialogListener[1]);
+            dialog.setNegativeButton(activiity.getResources().getString(R.string.cancel), dialogListener[1]);
 
         }
         dialog.show();

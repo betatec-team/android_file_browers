@@ -13,12 +13,15 @@ import com.wangy.myapplication.adapater.CustomAdapater
 import com.wangy.myapplication.adapater.viewhodel.CustomViewHodel
 import com.wangy.myapplication.databinding.ActivityMainBinding
 import com.wangy.new_lfilepicker.lfilepickerlibrary.LFilePicker
+import java.io.File
+import java.util.*
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private val REQUESTCODE_FROM_FRAGMENT = 1001
     var mBinding: ActivityMainBinding? = null
     var adapater: CustomAdapater<String>? = null
+    var currentPath : String? = null
     private var showData = arrayListOf<String>("返回的路径是", "返回的文件是")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initListenter() {
         mBinding?.btnSkip?.setOnClickListener {
+
             LFilePicker()
                 .withActivity(this)
                 .withRequestCode(REQUESTCODE_FROM_FRAGMENT) //.withStartPath("/storage/emulated/0/Download")
@@ -68,6 +72,8 @@ class MainActivity : AppCompatActivity() {
                 .withSetDel(mBinding?.cbMainDel?.isChecked as Boolean)
                 .withSetCopy(mBinding?.cbMainCopy?.isChecked as Boolean)
                 .withSetMove(mBinding?.cbMainMove?.isChecked as Boolean)
+                    // 跳转到指定位置
+                .withCurrentPostion(currentPath)
                 // 设置过滤模式
                 //            .withIsGreater(true)
                 //                // 过滤指定文件的大侠
@@ -94,8 +100,10 @@ class MainActivity : AppCompatActivity() {
                             denied: List<String?>
                         ) {
                             //用户选择了禁止不再询问
-                            com.wangy.new_lfilepicker.lfilepickerlibrary.utils.AlertDialogUtils.showDialog(this@MainActivity, "提示",
-                                "请给您的应用授予权限，否则无法执行之后的操作！！！", null,
+                            com.wangy.new_lfilepicker.lfilepickerlibrary.utils.AlertDialogUtils.showDialog(this@MainActivity,
+                                "提示",
+                                "请给您的应用授予权限，否则无法执行之后的操作！！！",
+                                null,
                                 DialogInterface.OnClickListener { _, _ -> // 重新请求
                                     PermissionUtils.permission(PermissionConstants.STORAGE)
                                         .callback(
@@ -111,7 +119,8 @@ class MainActivity : AppCompatActivity() {
                                                     exitProcess(0)
                                                 }
                                             }).request()
-                                }, DialogInterface.OnClickListener { _, _ -> // 退出应用
+                                },
+                                DialogInterface.OnClickListener { _, _ -> // 退出应用
                                     exitProcess(0)
                                 })
                         }
@@ -135,6 +144,14 @@ class MainActivity : AppCompatActivity() {
                 showData.add("返回的文件是")
                 if (arrayPath != null && arrayPath.isNotEmpty()) {
                     showData.addAll(arrayPath)
+                    var pathss = arrayPath[0]
+                    val file = File(pathss)
+                    if (file.isFile){
+                        currentPath = pathss
+                    }else if (file.isDirectory){
+                        currentPath = pathss
+                    }
+
                 }
                 if (adapater != null) {
                     adapater?.notifyDataSetChanged()

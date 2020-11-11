@@ -1,7 +1,16 @@
 package com.wangy.new_lfilepicker.lfilepickerlibrary.utils;
 
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
+import android.util.DisplayMetrics;
+
+import androidx.annotation.RequiresApi;
+
 import com.blankj.utilcode.util.ToastUtils;
+import com.wangy.new_lfilepicker.R;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.type.TypeEnum;
 
 import java.io.BufferedInputStream;
@@ -16,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Dimorinny on 24.10.15.
@@ -200,7 +210,7 @@ public class FileUtils {
      * 获取文件的结尾
      */
 
-    public static String getFileEnd( File file) {
+    public static String getFileEnd(File file) {
         String name = file.getName();
         String[] split = name.split("\\.");
         if (split.length == 1) {
@@ -277,24 +287,39 @@ public class FileUtils {
     /**
      * 创建文件/文件夹
      */
-    public static void createFile(String path, String name, int types) {
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static void createFile(Context context, String path, String name, int types, Locale locacalLanguage) {
+        Resources resource = getRes(context, locacalLanguage);
         File file = new File(path, name);
         if (1 == types) {
             // 判断文件是否存在
             if (file.exists()) {
-                ToastUtils.showShort("您要创建的文件/文件夹已经存在！");
+                ToastUtils.showShort(resource.getString(R.string.create_exit));
             } else {
                 try {
                     file.createNewFile();
-                    ToastUtils.showShort("文件创建成功！");
+                    ToastUtils.showShort(resource.getString(R.string.create_success));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    ToastUtils.showShort("文件创建失败！");
+                    ToastUtils.showShort(resource.getString(R.string.create_fails));
                 }
             }
         } else {
-            ToastUtils.showShort(file.exists() ? "您要创建的文件夹已经存在！" : file.mkdirs() ? "文件夹创建成功！" : "文件创建失败！");
+            ToastUtils.showShort(file.exists() ? resource.getString(R.string.create_box_exit) :
+                    resource.getString(file.mkdirs() ? R.string.create_success : R.string.create_fails));
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private static Resources getRes(Context context, Locale locacalLanguage) {
+        Resources rescouse = context.getResources();
+//        if (locacalLanguage != null) {
+//            Configuration config = rescouse.getConfiguration();
+//            DisplayMetrics dm = rescouse.getDisplayMetrics();
+//            config.setLocale(Locale.CHINESE);
+//            rescouse.updateConfiguration(config, dm);
+//        }
+        return rescouse;
     }
 
     /**
@@ -310,13 +335,15 @@ public class FileUtils {
     /**
      * 复制文件夹
      *
-     * @param resource 源路径
-     * @param target   目标路径
+     * @param resources       源路径
+     * @param target          目标路径
+     * @param locacalLanguage
      */
-    public static void copyFolder(String resource, String target) throws Exception {
-
-        File resourceFile = new File(resource);
-        if (!resourceFile.exists()) throw new Exception("源目标路径：[" + resource + "] 不存在...");
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static void copyFolder(Context context, String resources, String target, Locale locacalLanguage) throws Exception {
+        Resources resource = getRes(context, locacalLanguage);
+        File resourceFile = new File(resources);
+        if (!resourceFile.exists()) throw new Exception("源目标路径：[" + resources + "] 不存在...");
         File targetFile = new File(target);
         if (!targetFile.exists()) throw new Exception("存放的目标路径：[" + target + "] 不存在...");
 
@@ -345,13 +372,13 @@ public class FileUtils {
                     String dir1 = file.getAbsolutePath();
                     // 目的文件夹
                     String dir2 = file1.getAbsolutePath();
-                    copyFolder(dir1, dir2);
+                    copyFolder(context, dir1, dir2,locacalLanguage);
                 }
             }
         } else {
             File file = new File(target, resourceFile.getName());
             if (file.exists()) {
-                ToastUtils.showShort("请不要将同名称的文件放置到该目录下！");
+                ToastUtils.showShort(resource.getString(R.string.copy_current));
             } else {
                 file.mkdirs();
             }

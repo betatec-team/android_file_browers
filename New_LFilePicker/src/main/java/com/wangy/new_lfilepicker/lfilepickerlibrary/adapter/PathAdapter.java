@@ -28,7 +28,7 @@ import static com.blankj.utilcode.util.StringUtils.getString;
  * 作者：Leon
  * 时间：2017/3/15 15:47
  */
-public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder> {
+public class  PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder> {
     public interface OnItemClickListener {
         void click(int position);
     }

@@ -11,6 +11,8 @@ import com.wangy.new_lfilepicker.R;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.model.ParamEntity;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.ui.LFilePickerActivity;
 
+import java.util.Locale;
+
 
 /**
  * 作者：Leon
@@ -41,6 +43,9 @@ public class LFilePicker {
     private long mFileSize;
     private String mEndPath = "ALL";
     private int mGrideFifterNum = 3;
+    private Locale locacalLanguage = null;
+    private String currentPath = null;
+
 
     /**
      * 绑定Activity
@@ -253,7 +258,8 @@ public class LFilePicker {
     }
 
     /**
-     *  设置 是否是文件夹选项模式，true 表示的是可以多选文件夹，false 表示不可以
+     * 设置 是否是文件夹选项模式，true 表示的是可以多选文件夹，false 表示不可以
+     *
      * @param mutilyBoxMode
      * @return
      */
@@ -340,6 +346,7 @@ public class LFilePicker {
 
     /**
      * 设置文件的后缀名称 ，默认显示为All 表示所有文件都进行显示
+     *
      * @param endPath
      * @return
      */
@@ -351,6 +358,7 @@ public class LFilePicker {
 
     /**
      * 设置显示过滤  如果打开表示可以切换 list/ gride 模式
+     *
      * @param showFifter
      * @return
      */
@@ -371,6 +379,24 @@ public class LFilePicker {
         this.mListFifter = listFifter;
         return this;
     }
+
+    /**
+     * 设置跳转到默认的路径
+     *
+     * @param currentPath
+     * @return
+     */
+    public LFilePicker withCurrentPostion(String currentPath) {
+        this.currentPath = currentPath;
+        return this;
+    }
+    /**
+     *  关闭此项功能，因为没有办法实现
+     */
+//    public LFilePicker withLocalFifter(Locale localFifter) {
+//        this.locacalLanguage = localFifter;
+//        return this;
+//    }
 
     /**
      * 设置 gride 显示模式
@@ -449,6 +475,8 @@ public class LFilePicker {
         paramEntity.setShowFifter(mShowFifter);
         paramEntity.setListFifter(mListFifter);
         paramEntity.setGrideFifterNum(mGrideFifterNum);
+        paramEntity.setLocacalLanguage(locacalLanguage);
+        paramEntity.setCurrentPath(currentPath);
         Bundle bundle = new Bundle();
         bundle.putSerializable("param", paramEntity);
         return bundle;

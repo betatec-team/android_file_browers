@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="60dp"
         android:layout_marginRight="@dimen/dp_10"
         android:text="跳转界面"
         app:layout_constraintTop_toTopOf="parent" />
@@ -107,6 +107,7 @@
                 android:checked="true"
                 android:text="复制文件/文件夹" />
 
+
         </LinearLayout>
     </LinearLayout>
 
@@ -118,6 +119,7 @@
         android:hint="请输入要访问的路径！"
         android:paddingLeft="@dimen/dp_10"
         android:text="mnt/sdcard"
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@id/ll_layout" />
 
@@ -128,6 +130,7 @@
         android:background="@android:color/white"
         android:hint="请输入要显示的类型"
         android:paddingLeft="@dimen/dp_10"
+        android:imeOptions="flagNoExtractUi"
         android:text="ALL"
         android:textColorHint="@android:color/darker_gray"
         app:layout_constraintTop_toBottomOf="@id/et_path" />

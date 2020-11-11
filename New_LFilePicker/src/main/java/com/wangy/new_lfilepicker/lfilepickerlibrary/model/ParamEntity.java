@@ -2,6 +2,7 @@ package com.wangy.new_lfilepicker.lfilepickerlibrary.model;
 
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * 作者：Leon
@@ -35,6 +36,24 @@ public class ParamEntity implements Serializable {
     private boolean showFifter;
     private boolean listFifter;
     private int GrideFifterNum;
+    private Locale locacalLanguage;
+    private String currentPath;
+
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
+    public void setCurrentPath(String currentPath) {
+        this.currentPath = currentPath;
+    }
+
+    public Locale getLocacalLanguage() {
+        return locacalLanguage;
+    }
+
+    public void setLocacalLanguage(Locale locacalLanguage) {
+        this.locacalLanguage = locacalLanguage;
+    }
 
     public int getGrideFifterNum() {
         return GrideFifterNum;

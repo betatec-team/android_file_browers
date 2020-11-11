@@ -24,4 +24,55 @@
 
     <string name="lfile_ChooseTip">Please select folders path</string>
 
+    <string name="not_filebox">Please do not select a folder</string>
+
+    <string name="selector_once">Please select a book</string>
+
+    <string name="selector_box">Please select the folder to import</string>
+
+    <string name="no_selector_box">Do not select multiple folders</string>
+
+    <string name="you_check">The items you selected are</string>
+
+    <string name="you_check_end">Article, does not meet the conditions for modifying the name!</string>
+
+    <string name="copy">copy</string>
+
+    <string name="move">move</string>
+
+    <string name="file_box_num">Folders</string>
+
+    <string name="file_num">file</string>
+
+    <string name="donot_worry">You cannot copy the current file/folder to the current location!</string>
+
+    <string name="delete_all">Are you sure you want to delete these files？</string>
+
+    <string name="check_zero">There are 0 items selected, which do not meet the conditions for deletion!</string>
+
+    <string name="update_name_end">Article, does not meet the conditions for modifying the name!</string>
+
+    <string name="update_name_error">The current file name has not been modified!</string>
+
+    <string name="update_name_success">The current file name has been modified!</string>
+
+    <string name="tips">prompt</string>
+
+    <string name="create_file">Please enter the name of the file you want to create</string>
+
+    <string name="create_file_box">Please enter the name of the folder you want to create</string>
+
+    <string name="cancel">cancel</string>
+
+    <string name="inout_str">Please reconfirm the input</string>
+
+    <string name="create_exit">The file/folder you want to create already exists！</string>
+
+    <string name="create_success">File created successfully!</string>
+
+    <string name="create_fails">File created Faild！</string>
+
+    <string name="create_box_exit">The folder you want to create already exists!</string>
+
+    <string name="copy_current">Please do not put the file with the same name in this directory！</string>
 </resources>
