@@ -345,6 +345,7 @@ public class FileUtils {
         File resourceFile = new File(resources);
         if (!resourceFile.exists()) throw new Exception("源目标路径：[" + resources + "] 不存在...");
         File targetFile = new File(target);
+//        targetFile.createNewFile();
         if (!targetFile.exists()) throw new Exception("存放的目标路径：[" + target + "] 不存在...");
 
         // 获取源文件夹下的文件夹或文件

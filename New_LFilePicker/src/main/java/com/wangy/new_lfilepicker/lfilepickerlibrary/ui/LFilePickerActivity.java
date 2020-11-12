@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 import com.wangy.new_lfilepicker.R;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.adapter.PathAdapter;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.filter.LFileFilter;
@@ -71,8 +70,10 @@ public class LFilePickerActivity extends AppCompatActivity {
     private PopupWindow pw;
     private String defultBackPath;
     private boolean LIST_SHOW = true;
-    int currentPostion = 0;
+    private int currentPostion = 0;
     private File currentFiles;
+    private RelativeLayout rlCopy;
+    private TextView tvTags, tvCancel, tvCopy;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -215,7 +216,6 @@ public class LFilePickerActivity extends AppCompatActivity {
         }
     }
 
-    boolean falage = true;
 
     /**
      * 添加点击事件处理
@@ -240,6 +240,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                     mIsAllSelected = false;
                     updateMenuTitle();
                     mBtnAddBook.setText(getString(R.string.lfile_Selected));
+//                    closeCopy();
 //              todo
 //                    if (falage)
 //                        clearData();
@@ -278,6 +279,7 @@ public class LFilePickerActivity extends AppCompatActivity {
                     mIsAllSelected = false;
                     updateMenuTitle();
                     mBtnAddBook.setText(getString(R.string.lfile_Selected));
+//                    closeCopy();
 //                todo
 //                    if (falage)
 //                        clearData();
@@ -352,6 +354,7 @@ public class LFilePickerActivity extends AppCompatActivity {
     }
 
     private void back() {
+//        closeCopy();
         String tempPath = new File(mPath).getParent();
         if (tempPath == null) {
             return;
@@ -488,6 +491,11 @@ public class LFilePickerActivity extends AppCompatActivity {
      */
     private void initView() {
         mRecylerView = findViewById(R.id.recylerview);
+
+        rlCopy = findViewById(R.id.rl_life_copy);
+        tvTags = findViewById(R.id.tv_life_tags);
+        tvCancel = findViewById(R.id.tv_life_cancel);
+        tvCopy = findViewById(R.id.tv_life_copy);
         mTvPath = findViewById(R.id.tv_path);
         mTvBack = findViewById(R.id.tv_back);
         mBtnAddBook = findViewById(R.id.btn_addbook);
@@ -528,7 +536,7 @@ public class LFilePickerActivity extends AppCompatActivity {
      */
     private void updateOptionsMenu() {
         mMenu.findItem(R.id.action_selecteall_cancel).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isMutilyBoxMode());
-        mMenu.findItem(R.id.action_selecte_create).setVisible( mParamEntity.isCreate());
+        mMenu.findItem(R.id.action_selecte_create).setVisible(mParamEntity.isCreate());
         mMenu.findItem(R.id.action_selecte_rename).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isReName());
         mMenu.findItem(R.id.action_selecte_del).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isDel());
         mMenu.findItem(R.id.action_selecte_copy).setVisible(mParamEntity.isMutilyMode() && mParamEntity.isCopy());
@@ -544,21 +552,27 @@ public class LFilePickerActivity extends AppCompatActivity {
             //将当前目录下所有文件选中或者取消
             mPathAdapter.updateAllSelelcted(!mIsAllSelected);
             mIsAllSelected = !mIsAllSelected;
+//            clearDataAll();
+            // 为了防止之前有复制的操作
+            mListNumbers.clear();
+            mListBoxNumbers.clear();
             if (mIsAllSelected) {
                 // 全选
                 item.setIcon(R.drawable.check_selector);
                 for (File mListFile : mListFiles) {
                     //不包含再添加，避免重复添加
                     if (!mListFile.isDirectory() && !mListNumbers.contains(mListFile.getAbsolutePath())) {
+                        // 是文件
                         mListNumbers.add(mListFile.getAbsolutePath());
                     } else if (mListFile.isDirectory() && !mListBoxNumbers.contains(mListFile.getAbsolutePath())) {
+                        // 是文件夹
                         mListBoxNumbers.add(mListFile.getAbsolutePath());
                     }
-                    if (mParamEntity.getAddText() != null) {
-                        mBtnAddBook.setText(mParamEntity.getAddText() + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
-                    } else {
-                        mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
-                    }
+                }
+                if (mParamEntity.getAddText() != null) {
+                    mBtnAddBook.setText(mParamEntity.getAddText() + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
+                } else {
+                    mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + (mListNumbers.size() + mListBoxNumbers.size()) + " )");
                 }
             } else {
                 // 去除全选
@@ -567,13 +581,15 @@ public class LFilePickerActivity extends AppCompatActivity {
                 mBtnAddBook.setText(getString(R.string.lfile_Selected));
             }
             updateMenuTitle();
+            closeCopy();
         } else if (item.getItemId() == R.id.action_selecte_create) {
+            closeCopy();
             create();
         } else if (item.getItemId() == R.id.action_selecte_rename) {
-
+            closeCopy();
             reName();
-
         } else if (item.getItemId() == R.id.action_selecte_del) {
+            closeCopy();
             delFile();
 
         } else if (item.getItemId() == R.id.action_selecte_copy) {
@@ -592,6 +608,11 @@ public class LFilePickerActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    private void closeCopy() {
+        rlCopy.setVisibility(View.GONE);
+        mBtnAddBook.setVisibility(View.VISIBLE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -617,68 +638,150 @@ public class LFilePickerActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void copyOrMoveDialog(int mode) {
         Resources rescouse = getRes();
+        clearLastFileData(mListBoxNumbers);
+        clearLastFileData(mListNumbers);
         mNewListBoxNumbers = mListBoxNumbers;
         mNewListNumbers = mListNumbers;
-        falage = falage;
         String copy = rescouse.getString(R.string.copy);
+        String cancel = rescouse.getString(R.string.cancel);
         String move = rescouse.getString(R.string.move);
-        Snackbar snackbar =
-                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? copy + "：" : move + "：") + mNewListBoxNumbers.size() +
-                                rescouse.getString(R.string.file_box_num) + "，" + mNewListNumbers.size() + rescouse.getString(R.string.file_num),
-                        BaseTransientBottomBar.LENGTH_INDEFINITE)
-                        .setAction(copy, v -> {
-                            falage = true;
-                            if (mNewListNumbers != null) {
-                                //1.判断复制的文件是否是当前的路径
-                                for (String path : mNewListNumbers) {
-                                    if (mPath.equals(new File(path).getAbsolutePath())) {
-                                        ToastUtils.showShort(rescouse.getString(R.string.donot_worry));
-                                        return;
-                                    }
+//        mBtnAddBook.setText(getString(R.string.lfile_Selected));
+//        Dialog dialog = new Dialog(this);
+//        LayoutInflater inflater = LayoutInflater.from(this);
+//        View view = inflater.inflate(R.layout.copy_dialog, null);
+//        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 40);
+//        dialog.setContentView(view, layoutParams);
+//        TextView tvContent = view.findViewById(R.id.tv_copy_num);
+//        TextView tvCacncel = view.findViewById(R.id.tv_copy_close);
+//        TextView tvOK = view.findViewById(R.id.tv_copy);
+//        tvContent.setText((mode == 0 ? copy + "：" : move + "：") + mNewListBoxNumbers.size() +
+//                rescouse.getString(R.string.file_box_num) + "，" + mNewListNumbers.size() + rescouse.getString(R.string.file_num));
+//        dialog.show();
+        mBtnAddBook.setVisibility(View.GONE);
+        rlCopy.setVisibility(View.VISIBLE);
+        tvTags.setText((mode == 0 ? copy : move) + "：" + mNewListBoxNumbers.size() + rescouse.getString(R.string.file_box_num)
+                + "，" + mNewListNumbers.size() + rescouse.getString(R.string.file_num));
+        tvCancel.setText(cancel);
+        tvCopy.setText(copy);
+        tvCancel.setOnClickListener((v) -> {
+            // 清空选择
+            clearDataAll();
+            closeCopy();
+        });
+        tvCopy.setOnClickListener((v) -> {
+            if (mNewListNumbers != null) {
+                //1.判断复制的文件是否是当前的路径
+                for (String path : mNewListNumbers) {
+                    if (mPath.equals(new File(path).getAbsolutePath())) {
+                        ToastUtils.showShort(rescouse.getString(R.string.donot_worry));
+                        return;
+                    }
 
-                                }
-                                // 将文件/文件夹 复制到当前的位置
-                                for (String path : mNewListNumbers) {
-                                    try {
-                                        File file = new File(path);
-                                        FileUtils.copyFile(file, new File(mPath, file.getName()));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                // 将文件夹复制到当前的位置
-                                for (String path : mNewListBoxNumbers) {
-                                    try {
-                                        FileUtils.copyFolder(this, path, new File(mPath).getPath(), mParamEntity.getLocacalLanguage());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                if (mode == 1) {
-                                    for (String path : mNewListNumbers) {
-                                        try {
-                                            FileUtils.deleteDir(path);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    for (String path : mNewListBoxNumbers) {
-                                        try {
-                                            FileUtils.deleteDir(path);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                                notityUI();
-                            }
-                            clearData();
-                        });
-        snackbar.getView()
-                .setBackgroundColor(rescouse.getColor(android.R.color.white));
-        snackbar.setTextColor(rescouse.getColor(android.R.color.black));
-        snackbar.show();
+                }
+                // 将文件/文件夹 复制到当前的位置
+                for (String path : mNewListNumbers) {
+                    try {
+                        File file = new File(path);
+                        FileUtils.copyFile(file, new File(mPath, file.getName()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                // 将文件夹复制到当前的位置
+                for (String path : mNewListBoxNumbers) {
+                    try {
+                        FileUtils.copyFolder(this, path, new File(mPath).getPath(), mParamEntity.getLocacalLanguage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (mode == 1) {
+                    for (String path : mNewListNumbers) {
+                        try {
+                            FileUtils.deleteDir(path);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    for (String path : mNewListBoxNumbers) {
+                        try {
+                            FileUtils.deleteDir(path);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                notityUI();
+            }
+            clearData();
+            closeCopy();
+        });
+//        Snackbar snackbar =
+//                Snackbar.make(findViewById(R.id.cool_layout), (mode == 0 ? copy + "：" : move + "：") + mNewListBoxNumbers.size() +
+//                                rescouse.getString(R.string.file_box_num) + "，" + mNewListNumbers.size() + rescouse.getString(R.string.file_num),
+//                        BaseTransientBottomBar.LENGTH_INDEFINITE)
+//                        .setAction(copy, v -> {
+//                            if (mNewListNumbers != null) {
+//                                //1.判断复制的文件是否是当前的路径
+//                                for (String path : mNewListNumbers) {
+//                                    if (mPath.equals(new File(path).getAbsolutePath())) {
+//                                        ToastUtils.showShort(rescouse.getString(R.string.donot_worry));
+//                                        return;
+//                                    }
+//
+//                                }
+//                                // 将文件/文件夹 复制到当前的位置
+//                                for (String path : mNewListNumbers) {
+//                                    try {
+//                                        File file = new File(path);
+//                                        FileUtils.copyFile(file, new File(mPath, file.getName()));
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                                // 将文件夹复制到当前的位置
+//                                for (String path : mNewListBoxNumbers) {
+//                                    try {
+//                                        FileUtils.copyFolder(this, path, new File(mPath).getPath(), mParamEntity.getLocacalLanguage());
+//                                    } catch (Exception e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                                if (mode == 1) {
+//                                    for (String path : mNewListNumbers) {
+//                                        try {
+//                                            FileUtils.deleteDir(path);
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                    for (String path : mNewListBoxNumbers) {
+//                                        try {
+//                                            FileUtils.deleteDir(path);
+//                                        } catch (Exception e) {
+//                                            e.printStackTrace();
+//                                        }
+//                                    }
+//                                }
+//                                notityUI();
+//                            }
+//                            clearData();
+//                        });
+//        snackbar.getView()
+//                .setBackgroundColor(rescouse.getColor(android.R.color.white));
+//        snackbar.setTextColor(rescouse.getColor(android.R.color.black));
+//        snackbar.show();
 
+    }
+
+    private void clearLastFileData(ArrayList<String> fileList) {
+        for (int i = 0; i < fileList.size(); i++) {
+            String path = fileList.get(i);
+            File file = new File(path);
+            if (!file.exists() | !file.getParent().equals(mTvPath.getText().toString().trim()))
+                fileList.remove(file);
+
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -687,6 +790,10 @@ public class LFilePickerActivity extends AppCompatActivity {
         Resources rescouse = getRes();
         getBoxData();
         if (mListNumbers.size() > 0 | mListBoxNumbers.size() > 0) {
+            //todo 关闭
+//            clearDataAll();
+            clearLastFileData(mListBoxNumbers);
+            clearLastFileData(mListNumbers);
             AlertDialogUtils.showDialog(this, null, rescouse.getString(R.string.delete_all), null, (dialog, which) -> {
                 // 删除文件夹
                 if (mListBoxNumbers != null) {
@@ -720,6 +827,16 @@ public class LFilePickerActivity extends AppCompatActivity {
 
     }
 
+    private void clearDataAll() {
+        mListNumbers.clear();
+        mListBoxNumbers.clear();
+        mIsAllSelected = false;
+        if (mPathAdapter != null) {
+            mPathAdapter.notifyDataSetChanged();
+        }
+        updateMenuTitle();
+    }
+
     /**
      * 重命名的方法
      */
@@ -727,12 +844,23 @@ public class LFilePickerActivity extends AppCompatActivity {
     private void reName() {
         Resources rescouse = getRes();
         getBoxData();
+        // todo
+//        mListNumbers.clear();
+//        mListBoxNumbers.clear();
+//        mIsAllSelected = false;
+//        if (mPathAdapter!=null){
+//            mPathAdapter.notifyDataSetChanged();
+//        }
+//        updateMenuTitle();
+
         if (mListNumbers != null && mListNumbers.size() == 1 && (mListBoxNumbers == null | mListBoxNumbers.size() <= 0)) {
             File file = new File(mListNumbers.get(0));
             retNameAlertDialog(file.getName(), file.getParent());
         } else {
             assert mListNumbers != null;
             if (mListBoxNumbers != null && mListBoxNumbers.size() == 1 && mListNumbers.size() <= 0) {
+                clearLastFileData(mListBoxNumbers);
+                clearLastFileData(mListNumbers);
                 File file = new File(mListBoxNumbers.get(0));
                 retNameAlertDialog(file.getName(), file.getParent());
             } else {
@@ -809,6 +937,17 @@ public class LFilePickerActivity extends AppCompatActivity {
             // 点击外部不可以消失
 //            pw.setTouchable(true);
             pw.showAtLocation(LayoutInflater.from(LFilePickerActivity.this).inflate(R.layout.activity_lfile_picker, null, false), Gravity.RIGHT, 0, -125);
+//            mPathAdapter.
+            // 去除所有的选中
+            //todo
+//            mListNumbers.clear();
+//            mListBoxNumbers.clear();
+//            mIsAllSelected = false;
+//            if (mPathAdapter!=null){
+//                mPathAdapter.notifyDataSetChanged();
+//            }
+//            updateMenuTitle();
+//            mBtnAddBook.setText(getString(R.string.lfile_Selected));
 
         }
     }
@@ -852,10 +991,11 @@ public class LFilePickerActivity extends AppCompatActivity {
      * 更新选项菜单文字
      */
     public void updateMenuTitle() {
-
         if (mIsAllSelected) {
+            mMenu.findItem(R.id.action_selecteall_cancel).setIcon(R.drawable.check_selector);
             mMenu.getItem(0).setTitle(getString(R.string.lfile_Cancel));
         } else {
+            mMenu.findItem(R.id.action_selecteall_cancel).setIcon(R.drawable.check_normal);
             mMenu.getItem(0).setTitle(getString(R.string.lfile_SelectAll));
         }
     }
@@ -880,7 +1020,6 @@ public class LFilePickerActivity extends AppCompatActivity {
 //            config.setLocale(mParamEntity.getLocacalLanguage());
 //            rescouse.updateConfiguration(config, dm);
 //        }
-
         return rescouse;
 
     }

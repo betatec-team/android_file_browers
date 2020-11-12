@@ -6,8 +6,11 @@
 
     <EditText
         android:id="@+id/et_iteam_rename"
+        android:imeOptions="flagNoExtractUi"
         android:layout_width="match_parent"
+        android:maxLines="1"
         android:layout_height="wrap_content"
+        android:inputType="textUri|textMultiLine"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

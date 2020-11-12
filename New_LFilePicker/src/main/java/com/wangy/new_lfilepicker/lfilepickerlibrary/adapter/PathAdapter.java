@@ -28,14 +28,14 @@ import static com.blankj.utilcode.util.StringUtils.getString;
  * 作者：Leon
  * 时间：2017/3/15 15:47
  */
-public class  PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder> {
+public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder> {
     public interface OnItemClickListener {
         void click(int position);
     }
 
-    public interface OnCancelChoosedListener {
-        void cancelChoosed(CheckBox checkBox);
-    }
+//    public interface OnCancelChoosedListener {
+//        void cancelChoosed(CheckBox checkBox);
+//    }
 
     private final String TAG = "FilePickerLeon";
     private List<File> mListData;
@@ -112,9 +112,7 @@ public class  PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolde
         holder.cbChoose.setChecked(mCheckedFlags[position]);//用数组中的值设置CheckBox的选中状态
         //再设置一次CheckBox的选中监听器，当CheckBox的选中状态发生改变时，把改变后的状态储存在数组中
         holder.cbChoose.setOnCheckedChangeListener((compoundButton, check) -> {
-
             if (file.isDirectory() && mMutilyBoxMode) {
-
                 if (check) {
                     fileBoxList.add(position);
                 } else {
@@ -141,24 +139,14 @@ public class  PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolde
                         num += 1;
                     }
                 }
-//                if (activity.mParamEntity.getAddText() != null) {
-//                    activity.mBtnAddBook.setText(activity.mParamEntity.getAddText() + "( " + (mListNumbers.size() + fileBoxList.size()) + " )");
-//                } else {
-//                    activity.mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + (mListNumbers.size() + fileBoxList.size()) + " )");
-//                }
                 if (activity.mParamEntity.getAddText() != null) {
                     activity.mBtnAddBook.setText(activity.mParamEntity.getAddText() + "( " + num + " )");
                 } else {
                     activity.mBtnAddBook.setText(getString(R.string.lfile_Selected) + "( " + num + " )");
                 }
                 // 条目的更新
-                if (num == mCheckedFlags.length) {
-                    // 显示取消全选
-                    activity.mIsAllSelected = true;
-                } else {
-                    // 显示全选
-                    activity.mIsAllSelected = false;
-                }
+                // 显示取消全选
+                activity.mIsAllSelected = num == mCheckedFlags.length;
                 activity.updateMenuTitle();
 
             }

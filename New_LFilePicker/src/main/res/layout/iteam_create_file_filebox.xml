@@ -7,7 +7,7 @@
         android:id="@+id/et_iteam_create"
         android:background="@null"
         android:maxLines="1"
-        android:inputType="text"
+        android:inputType="textUri|textMultiLine"
         android:imeOptions="flagNoExtractUi"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginStart="@dimen/dp_40"
