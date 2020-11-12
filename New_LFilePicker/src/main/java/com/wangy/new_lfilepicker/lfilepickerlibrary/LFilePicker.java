@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.StyleRes;
 
-import androidx.annotation.StyleRes;
 
 import com.wangy.new_lfilepicker.R;
 import com.wangy.new_lfilepicker.lfilepickerlibrary.model.ParamEntity;

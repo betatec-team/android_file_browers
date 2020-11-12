@@ -5,8 +5,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
 import com.wangy.myapplication.adapater.CustomAdapater
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUESTCODE_FROM_FRAGMENT = 1001
     var mBinding: ActivityMainBinding? = null
     var adapater: CustomAdapater<String>? = null
-    var currentPath : String? = null
+    var currentPath: String? = null
     private var showData = arrayListOf<String>("返回的路径是", "返回的文件是")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 .withSetDel(mBinding?.cbMainDel?.isChecked as Boolean)
                 .withSetCopy(mBinding?.cbMainCopy?.isChecked as Boolean)
                 .withSetMove(mBinding?.cbMainMove?.isChecked as Boolean)
-                    // 跳转到指定位置
+                // 跳转到指定位置
                 .withCurrentPostion(currentPath)
                 // 设置过滤模式
                 //            .withIsGreater(true)
@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
      * 给应用授权的方法
      */
     private fun initPro() {
+//        NavigationBarUtil.clearFocusNotAle()
         // 继续执行之后的操作
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!PermissionUtils.isGranted(PermissionConstants.STORAGE)) {
@@ -100,7 +101,8 @@ class MainActivity : AppCompatActivity() {
                             denied: List<String?>
                         ) {
                             //用户选择了禁止不再询问
-                            com.wangy.new_lfilepicker.lfilepickerlibrary.utils.AlertDialogUtils.showDialog(this@MainActivity,
+                            com.wangy.new_lfilepicker.lfilepickerlibrary.utils.AlertDialogUtils.showDialog(
+                                this@MainActivity,
                                 "提示",
                                 "请给您的应用授予权限，否则无法执行之后的操作！！！",
                                 null,
@@ -146,9 +148,9 @@ class MainActivity : AppCompatActivity() {
                     showData.addAll(arrayPath)
                     var pathss = arrayPath[0]
                     val file = File(pathss)
-                    if (file.isFile){
+                    if (file.isFile) {
                         currentPath = pathss
-                    }else if (file.isDirectory){
+                    } else if (file.isDirectory) {
                         currentPath = pathss
                     }
 

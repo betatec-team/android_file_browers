@@ -1,78 +1,117 @@
 <resources>
-    <string name="app_name" translatable="false">My Application</string>
-    <string name="lfile_NotFoundBooks">Please select a file at least</string>
+    <string name="app_name" translatable="false"/>
+<!--    <string name="lfile_NotFoundBooks">Please select a file at least</string>-->
 
-    <string name="lfile_NotFoundPath">The sd card is not available</string>
+<!--    <string name="lfile_NotFoundPath">The sd card is not available</string>-->
 
-    <string name="lfile_UpOneLevel">Up</string>
+<!--    <string name="lfile_UpOneLevel">Up</string>-->
 
-    <string name="lfile_Selected">selected</string>
+<!--    <string name="lfile_Selected">selected</string>-->
 
-    <string name="lfile_LItem">item</string>
+<!--    <string name="lfile_LItem">item</string>-->
 
-    <string name="lfile_Detail">detail</string>
+<!--    <string name="lfile_Detail">detail</string>-->
 
-    <string name="lfile_FileSize">size : </string>
+<!--    <string name="lfile_FileSize">size : </string>-->
 
-    <string name="lfile_OutSize">Has reached the maximum number</string>
+<!--    <string name="lfile_OutSize">Has reached the maximum number</string>-->
 
-    <string name="lfile_SelectAll">SelectAll</string>
+<!--    <string name="lfile_SelectAll">SelectAll</string>-->
 
-    <string name="lfile_Cancel">Cancel</string>
+<!--    <string name="lfile_Cancel">Cancel</string>-->
 
-    <string name="lfile_OK">OK</string>
+<!--    <string name="lfile_OK">OK</string>-->
 
-    <string name="lfile_ChooseTip">Please select folders path</string>
+<!--    <string name="lfile_ChooseTip">Please select folders path</string>-->
 
-    <string name="not_filebox">Please do not select a folder</string>
+<!--    <string name="not_filebox">Please do not select a folder</string>-->
 
-    <string name="selector_once">Please select a book</string>
+<!--    <string name="selector_once">Please select a book</string>-->
 
-    <string name="selector_box">Please select the folder to import</string>
+<!--    <string name="selector_box">Please select the folder to import</string>-->
 
-    <string name="no_selector_box">Do not select multiple folders</string>
+<!--    <string name="no_selector_box">Do not select multiple folders</string>-->
 
-    <string name="you_check">The items you selected are</string>
+<!--    <string name="you_check">The items you selected are</string>-->
 
-    <string name="you_check_end">Article, does not meet the conditions for modifying the name!</string>
+<!--    <string name="you_check_end">Article, does not meet the conditions for modifying the name!</string>-->
 
-    <string name="copy">copy</string>
+<!--    <string name="copy">copy</string>-->
 
-    <string name="move">move</string>
+<!--    <string name="move">move</string>-->
 
-    <string name="file_box_num">Folders</string>
+<!--    <string name="file_box_num">Folders</string>-->
 
-    <string name="file_num">file</string>
+<!--    <string name="file_num">file</string>-->
 
-    <string name="donot_worry">You cannot copy the current file/folder to the current location!</string>
+<!--    <string name="donot_worry">You cannot copy the current file/folder to the current location!</string>-->
 
-    <string name="delete_all">Are you sure you want to delete these files？</string>
+<!--    <string name="delete_all">Are you sure you want to delete these files？</string>-->
 
-    <string name="check_zero">There are 0 items selected, which do not meet the conditions for deletion!</string>
+<!--    <string name="check_zero">There are 0 items selected, which do not meet the conditions for deletion!</string>-->
 
-    <string name="update_name_end">Article, does not meet the conditions for modifying the name!</string>
+<!--    <string name="update_name_end">Article, does not meet the conditions for modifying the name!</string>-->
 
-    <string name="update_name_error">The current file name has not been modified!</string>
+<!--    <string name="update_name_error">The current file name has not been modified!</string>-->
 
-    <string name="update_name_success">The current file name has been modified!</string>
+<!--    <string name="update_name_success">The current file name has been modified!</string>-->
 
-    <string name="tips">prompt</string>
+<!--    <string name="tips">prompt</string>-->
 
-    <string name="create_file">Please enter the name of the file you want to create</string>
+<!--    <string name="create_file">Please enter the name of the file you want to create</string>-->
 
-    <string name="create_file_box">Please enter the name of the folder you want to create</string>
+<!--    <string name="create_file_box">Please enter the name of the folder you want to create</string>-->
 
-    <string name="cancel">cancel</string>
+<!--    <string name="cancel">cancel</string>-->
 
-    <string name="inout_str">Please reconfirm the input</string>
+<!--    <string name="inout_str">Please reconfirm the input</string>-->
 
-    <string name="create_exit">The file/folder you want to create already exists！</string>
+<!--    <string name="create_exit">The file/folder you want to create already exists！</string>-->
 
-    <string name="create_success">File created successfully!</string>
+<!--    <string name="create_success">File created successfully!</string>-->
 
-    <string name="create_fails">File created Faild！</string>
+<!--    <string name="create_fails">File created Faild！</string>-->
 
-    <string name="create_box_exit">The folder you want to create already exists!</string>
+<!--    <string name="create_box_exit">The folder you want to create already exists!</string>-->
 
-    <string name="copy_current">Please do not put the file with the same name in this directory！</string>
+<!--    <string name="copy_current">Please do not put the file with the same name in this directory！</string>-->
+
+    <string name="lfile_NotFoundBooks">请选择导入的图书</string>
+    <string name="lfile_NotFoundPath">SD 存储卡状态不可用</string>
+    <string name="lfile_UpOneLevel">上一级</string>
+    <string name="lfile_Selected">选中</string>
+    <string name="lfile_LItem">项</string>
+    <string name="lfile_Detail">详情</string>
+    <string name="lfile_FileSize">文件大小 : </string>
+    <string name="lfile_OutSize">已经达到最大选择数量</string>
+    <string name="lfile_SelectAll">全选</string>
+    <string name="lfile_Cancel">取消全选</string>
+    <string name="lfile_OK">确定</string>
+    <string name="lfile_ChooseTip">请选择文件夹</string>
+    <string name="not_filebox">请不要选择文件夹</string>
+    <string name="selector_once">请选择一本图书</string>
+    <string name="selector_box">请选择导入的文件夹</string>
+    <string name="no_selector_box">请勿选择多个文件夹</string>
+    <string name="you_check">您选中的条目有</string>
+    <string name="you_check_end">条,不符合修改名称的条件！</string>
+    <string name="copy">复制</string>
+    <string name="move">移动</string>
+    <string name="file_box_num">个文件夹</string>
+    <string name="file_num">个文件</string>
+    <string name="donot_worry">不可以将当前的文件/文件夹复制在当前的位置上！</string>
+    <string name="delete_all">您确定要删除这些文件吗吗？</string>
+    <string name="check_zero">您选中的条目有 0 条,不符合删除的条件！</string>
+    <string name="update_name_end">条,不符合修改名称的条件！</string>
+    <string name="update_name_error">当前文件名称没有修改!</string>
+    <string name="update_name_success">当前文件名称已经修改!</string>
+    <string name="tips">提示</string>
+    <string name="create_file">请输入您要创建的文件名称</string>
+    <string name="create_file_box">请输入您要创建的文件夹名称</string>
+    <string name="cancel">取消</string>
+    <string name="inout_str">请重新确认输入内容</string>
+    <string name="create_exit">您要创建的文件/文件夹已经存在！</string>
+    <string name="create_success">文件创建成功！</string>
+    <string name="create_fails">文件创建失败！</string>
+    <string name="create_box_exit">您要创建的文件夹已经存在！</string>
+    <string name="copy_current">请不要将同名称的文件放置到该目录下！</string>
 </resources>

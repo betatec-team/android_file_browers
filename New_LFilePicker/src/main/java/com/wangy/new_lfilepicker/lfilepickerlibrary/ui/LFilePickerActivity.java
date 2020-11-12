@@ -1,12 +1,19 @@
 package com.wangy.new_lfilepicker.lfilepickerlibrary.ui;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -22,13 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -50,8 +50,6 @@ import java.util.Objects;
 
 
 public class LFilePickerActivity extends AppCompatActivity {
-
-    private final String TAG = "FilePickerLeon";
     private EmptyRecyclerView mRecylerView;
     private View mEmptyView;
     private TextView mTvPath, mTvBack;
@@ -501,6 +499,7 @@ public class LFilePickerActivity extends AppCompatActivity {
         mBtnAddBook = findViewById(R.id.btn_addbook);
         mEmptyView = findViewById(R.id.empty_view);
         mToolbar = findViewById(R.id.toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
         if (mParamEntity.getAddText() != null) {
             mBtnAddBook.setText(mParamEntity.getAddText());
         }

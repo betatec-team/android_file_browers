@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -19,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomViewHodel extends RecyclerView.ViewHolder {
     private SparseArray<View> mViews;

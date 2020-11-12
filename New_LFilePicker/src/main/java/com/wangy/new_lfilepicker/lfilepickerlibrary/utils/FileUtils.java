@@ -2,12 +2,9 @@ package com.wangy.new_lfilepicker.lfilepickerlibrary.utils;
 
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.util.DisplayMetrics;
-
-import androidx.annotation.RequiresApi;
+import android.support.annotation.RequiresApi;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.wangy.new_lfilepicker.R;

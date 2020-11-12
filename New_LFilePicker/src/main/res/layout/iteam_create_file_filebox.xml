@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--
+        android:inputType="textUri|textMultiLine"
+    -->
     <EditText
         android:id="@+id/et_iteam_create"
         android:background="@null"
         android:maxLines="1"
-        android:inputType="textUri|textMultiLine"
+
         android:imeOptions="flagNoExtractUi"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginStart="@dimen/dp_40"
@@ -16,4 +19,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
