@@ -5,16 +5,16 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
+import com.leon.lfilepickerlibrary.LFilePicker
+import com.leon.lfilepickerlibrary.utils.AlertDialogUtils
 import com.wangy.myapplication.adapater.CustomAdapater
 import com.wangy.myapplication.adapater.viewhodel.CustomViewHodel
 import com.wangy.myapplication.databinding.ActivityMainBinding
-import com.wangy.new_lfilepicker.lfilepickerlibrary.LFilePicker
 import java.io.File
-import java.util.*
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
                             denied: List<String?>
                         ) {
                             //用户选择了禁止不再询问
-                            com.wangy.new_lfilepicker.lfilepickerlibrary.utils.AlertDialogUtils.showDialog(
+                           AlertDialogUtils.showDialog(
                                 this@MainActivity,
                                 "提示",
                                 "请给您的应用授予权限，否则无法执行之后的操作！！！",

@@ -26,7 +26,7 @@ app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingVi
     android:layout_height="match_parent"
     android:background="@color/lfile_white">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
@@ -89,7 +89,7 @@ app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingVi
         android:textSize="18sp" />
 
 
-    <com.wangy.new_lfilepicker.lfilepickerlibrary.widget.EmptyRecyclerView
+    <com.leon.lfilepickerlibrary.widget.EmptyRecyclerView
         android:id="@+id/recylerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
