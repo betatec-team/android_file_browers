@@ -38,6 +38,15 @@ public class ParamEntity implements Serializable {
     private int GrideFifterNum;
     private Locale locacalLanguage;
     private String currentPath;
+    private boolean hideToast;
+
+    public boolean isHideToast() {
+        return hideToast;
+    }
+
+    public void setHideToast(boolean hideToast) {
+        this.hideToast = hideToast;
+    }
 
     public String getCurrentPath() {
         return currentPath;

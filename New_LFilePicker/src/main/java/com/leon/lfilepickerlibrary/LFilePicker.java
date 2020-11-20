@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.annotation.StyleRes;
 
-import com.wangy.new_lfilepicker.R;
 import com.leon.lfilepickerlibrary.model.ParamEntity;
 import com.leon.lfilepickerlibrary.ui.LFilePickerActivity;
 
@@ -39,12 +38,14 @@ public class LFilePicker {
     private int mMaxNum;
     private String mStartPath, defultPath;
     private boolean mIsGreater = true;//是否大于
-    private boolean mCreate = true, mDel = true, mMove = true, mReName = true, mCopy = true, mShowFifter = false, mListFifter = true;
+    private boolean mCreate = true, mDel = true, mMove = true,
+            mReName = true, mCopy = true, mShowFifter = false, mListFifter = true;
     private long mFileSize;
     private String mEndPath = "ALL";
     private int mGrideFifterNum = 3;
     private Locale locacalLanguage = null;
     private String currentPath = null;
+    private  boolean mHide = true;
 
 
     /**
@@ -344,6 +345,11 @@ public class LFilePicker {
         return this;
     }
 
+    public LFilePicker withToast(boolean hide) {
+        this.mHide = hide;
+        return this;
+    }
+
     /**
      * 设置文件的后缀名称 ，默认显示为All 表示所有文件都进行显示
      *
@@ -408,7 +414,8 @@ public class LFilePicker {
 
     public LFilePicker withGrideFifterNum(int grideFifterNum) throws Exception {
         if (mGrideFifterNum <= 1) {
-            throw new Exception(" Please set it more than once, or this exception will be thrown! ");
+            throw new Exception(" Please set it more than once, " +
+                    "or this exception will be thrown! ");
         }
         this.mGrideFifterNum = grideFifterNum;
         return this;
@@ -417,7 +424,8 @@ public class LFilePicker {
     public void start() {
 
         if (mActivity == null && mFragment == null && mSupportFragment == null) {
-            throw new RuntimeException("You must pass Activity or Fragment by withActivity or withFragment or withSupportFragment method");
+            throw new RuntimeException("You must pass Activity or Fragment " +
+                    "by withActivity or withFragment or withSupportFragment method");
         }
         Intent intent = initIntent();
         Bundle bundle = getBundle();
@@ -477,6 +485,7 @@ public class LFilePicker {
         paramEntity.setGrideFifterNum(mGrideFifterNum);
         paramEntity.setLocacalLanguage(locacalLanguage);
         paramEntity.setCurrentPath(currentPath);
+        paramEntity.setHideToast(mHide);
         Bundle bundle = new Bundle();
         bundle.putSerializable("param", paramEntity);
         return bundle;

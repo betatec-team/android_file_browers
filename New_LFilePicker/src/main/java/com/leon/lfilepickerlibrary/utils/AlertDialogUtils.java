@@ -5,8 +5,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.View;
 
+import com.leon.lfilepickerlibrary.R;
 
-import com.wangy.new_lfilepicker.R;
 
 public class AlertDialogUtils {
     public synchronized static void showDialog(Activity activiity, String title, String message, View view, DialogInterface.OnClickListener... dialogListener) {

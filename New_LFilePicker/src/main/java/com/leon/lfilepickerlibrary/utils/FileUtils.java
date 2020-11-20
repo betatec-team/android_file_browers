@@ -8,8 +8,10 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
-import com.wangy.new_lfilepicker.R;
+import com.leon.lfilepickerlibrary.R;
+import com.leon.lfilepickerlibrary.model.ParamEntity;
 import com.leon.lfilepickerlibrary.type.TypeEnum;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -226,7 +228,8 @@ public class FileUtils {
         if (size <= 0) return "0";
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        return new DecimalFormat("#").format(size / Math.pow(1024,
+                digitGroups)) + " " + units[digitGroups];
     }
 
     /**
@@ -257,7 +260,8 @@ public class FileUtils {
      * @param endPath
      * @return List<File>
      */
-    public static List<File> getFileList(String path, FileFilter filter, boolean isGreater, long targetSize, String endPath) {
+    public static List<File> getFileList(String path, FileFilter filter, boolean isGreater,
+                                         long targetSize, String endPath) {
         List<File> list = FileUtils.getFileListByDirPath(path, filter, endPath);
         //进行过滤文件大小
         Iterator iterator = list.iterator();
@@ -286,28 +290,40 @@ public class FileUtils {
      * 创建文件/文件夹
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static void createFile(Context context, String path, String name, int types, Locale locacalLanguage) {
+    public static void createFile(Context context, String path, String name, int types,
+                                  Locale locacalLanguage, ParamEntity mParamEntity) {
         Resources resource = getRes(context, locacalLanguage);
         File file = new File(path, name);
         if (1 == types) {
             // 判断文件是否存在
             if (file.exists()) {
-                Toast.makeText(context,resource.getString(R.string.create_exit),Toast.LENGTH_LONG).show();
+                if (!mParamEntity.isHideToast()) {
+                    Toast.makeText(context, resource.getString(R.string.create_exit),
+                            Toast.LENGTH_LONG).show();
+                }
 
             } else {
                 try {
                     file.createNewFile();
-                    Toast.makeText(context,resource.getString(R.string.create_success),Toast.LENGTH_LONG).show();
+                    if (!mParamEntity.isHideToast()) {
+                        Toast.makeText(context, resource.getString(R.string.create_success), Toast.LENGTH_LONG).show();
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(context,resource.getString(R.string.create_fails),Toast.LENGTH_LONG).show();
+                    if (!mParamEntity.isHideToast()) {
+                        Toast.makeText(context, resource.getString(R.string.create_fails), Toast.LENGTH_LONG).show();
+                    }
 
                 }
             }
         } else {
-            Toast.makeText(context,file.exists() ? resource.getString(R.string.create_box_exit) :
-                    resource.getString(file.mkdirs() ? R.string.create_success : R.string.create_fails),Toast.LENGTH_LONG).show();
+            file.mkdir();
+            if (!mParamEntity.isHideToast()) {
+                Toast.makeText(context, file.exists() ? resource.getString(R.string.create_box_exit) :
+                        resource.getString(file.mkdirs() ? R.string.create_success :
+                                R.string.create_fails), Toast.LENGTH_LONG).show();
+            }
 
         }
     }
@@ -336,13 +352,14 @@ public class FileUtils {
 
     /**
      * 复制文件夹
-     *
-     * @param resources       源路径
+     *  @param resources       源路径
      * @param target          目标路径
      * @param locacalLanguage
+     * @param mParamEntity
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
-    public static void copyFolder(Context context, String resources, String target, Locale locacalLanguage) throws Exception {
+    public static void copyFolder(Context context, String resources, String target, Locale locacalLanguage, ParamEntity mParamEntity)
+            throws Exception {
         Resources resource = getRes(context, locacalLanguage);
         File resourceFile = new File(resources);
         if (!resourceFile.exists()) throw new Exception("源目标路径：[" + resources + "] 不存在...");
@@ -356,7 +373,8 @@ public class FileUtils {
         if (resourceFiles != null && resourceFiles.length > 0) {
             for (File file : resourceFiles) {
 
-                File file1 = new File(targetFile.getAbsolutePath() + File.separator + resourceFile.getName());
+                File file1 = new File(targetFile.getAbsolutePath() + File.separator +
+                        resourceFile.getName());
                 // 复制文件
                 if (file.isFile()) {
                     System.out.println("文件" + file.getName());
@@ -365,7 +383,8 @@ public class FileUtils {
                     if (!file1.exists()) {
                         file1.mkdirs();
                     }
-                    File targetFile1 = new File(file1.getAbsolutePath() + File.separator + file.getName());
+                    File targetFile1 = new File(file1.getAbsolutePath() +
+                            File.separator + file.getName());
                     copyFile(file, targetFile1);
                 } else if (file.isDirectory()) {// 复制源文件夹
                     if (!file.exists()) {
@@ -375,13 +394,16 @@ public class FileUtils {
                     String dir1 = file.getAbsolutePath();
                     // 目的文件夹
                     String dir2 = file1.getAbsolutePath();
-                    copyFolder(context, dir1, dir2,locacalLanguage);
+                    copyFolder(context, dir1, dir2,locacalLanguage,mParamEntity);
                 }
             }
         } else {
             File file = new File(target, resourceFile.getName());
             if (file.exists()) {
-                Toast.makeText(context,resource.getString(R.string.copy_current),Toast.LENGTH_LONG).show();
+                if (!mParamEntity.isHideToast()) {
+                    Toast.makeText(context, resource.getString(R.string.copy_current),
+                            Toast.LENGTH_LONG).show();
+                }
             } else {
                 file.mkdirs();
             }

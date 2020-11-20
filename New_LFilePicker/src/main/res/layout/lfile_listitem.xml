@@ -37,12 +37,12 @@
         <TextView
             android:id="@+id/tv_name"
             style="@style/LFile_item_text_name"
-            android:text="鬼吹灯"/>
+            />
 
         <TextView
             android:id="@+id/tv_detail"
             style="@style/LFile_item_text_detail"
-            android:text="类型：txt  大小：1024KB"/>
+            />
     </LinearLayout>
 
 

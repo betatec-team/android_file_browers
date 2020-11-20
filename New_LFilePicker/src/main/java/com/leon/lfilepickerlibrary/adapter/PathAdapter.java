@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.wangy.new_lfilepicker.R;
+import com.leon.lfilepickerlibrary.R;
 import com.leon.lfilepickerlibrary.ui.LFilePickerActivity;
 import com.leon.lfilepickerlibrary.utils.Constant;
 import com.leon.lfilepickerlibrary.utils.FileUtils;
@@ -50,7 +50,9 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
     public LinkedList<Integer> fileBoxList = new LinkedList();
     public ArrayList<String> mListNumbers = new ArrayList<String>();//存放选中文件条目的数据地址
 
-    public PathAdapter(List<File> mListData, LFilePickerActivity activity, FileFilter mFileFilter, boolean mMutilyMode, boolean mMutilyBoxMode, boolean mIsGreater, long mFileSize) {
+    public PathAdapter(List<File> mListData, LFilePickerActivity activity,
+                       FileFilter mFileFilter, boolean mMutilyMode, boolean mMutilyBoxMode,
+                       boolean mIsGreater, long mFileSize) {
         this.mListData = mListData;
         this.activity = activity;
         this.mFileFilter = mFileFilter;
@@ -86,7 +88,8 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
             updateFloaderIconStyle(holder.ivType);
             holder.tvName.setText(file.getName());
             //文件大小过滤
-            List files = FileUtils.getFileList(file.getAbsolutePath(), mFileFilter, mIsGreater, mFileSize, activity.mParamEntity.getEndPath());
+            List files = FileUtils.getFileList(file.getAbsolutePath(), mFileFilter, mIsGreater,
+                    mFileSize, activity.mParamEntity.getEndPath());
             if (files == null) {
                 holder.tvDetail.setText("0 " + activity.getString(R.string.lfile_LItem));
             } else {
@@ -236,11 +239,11 @@ public class PathAdapter extends RecyclerView.Adapter<PathAdapter.PathViewHolder
 
         public PathViewHolder(View itemView) {
             super(itemView);
-            ivType = (ImageView) itemView.findViewById(R.id.iv_type);
-            layoutRoot = (RelativeLayout) itemView.findViewById(R.id.layout_item_root);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
-            tvDetail = (TextView) itemView.findViewById(R.id.tv_detail);
-            cbChoose = (CheckBox) itemView.findViewById(R.id.cb_choose);
+            ivType = itemView.findViewById(R.id.iv_type);
+            layoutRoot = itemView.findViewById(R.id.layout_item_root);
+            tvName = itemView.findViewById(R.id.tv_name);
+            tvDetail = itemView.findViewById(R.id.tv_detail);
+            cbChoose = itemView.findViewById(R.id.cb_choose);
         }
     }
 }

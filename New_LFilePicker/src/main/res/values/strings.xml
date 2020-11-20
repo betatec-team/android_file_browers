@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name" translatable="false"/>
+    <string name="app_name" translatable="false" />
+
     <string name="lfile_NotFoundBooks">Please select a file at least</string>
 
     <string name="lfile_NotFoundPath">The sd card is not available</string>
@@ -32,10 +33,6 @@
 
     <string name="no_selector_box">Do not select multiple folders</string>
 
-    <string name="you_check">The items you selected are</string>
-
-    <string name="you_check_end">Article, does not meet the conditions for modifying the name!</string>
-
     <string name="copy">copy</string>
 
     <string name="move">move</string>
@@ -48,7 +45,13 @@
 
     <string name="delete_all">Are you sure you want to delete these files？</string>
 
-    <string name="check_zero">There are 0 items selected, which do not meet the conditions for deletion!</string>
+    <string name="check_zero_del">You have selected 0 entries, which do not meet the conditions for deleting files / folders!</string>
+
+    <string name="check_zero_rename">You have selected 0 entries, which do not meet the conditions of name modification!</string>
+
+    <string name="check_zero_copy">You have selected 0 entries, which do not meet the conditions of copy operation!</string>
+
+    <string name="check_zero_move">You have selected 0 entries, which do not meet the conditions of moving operation!</string>
 
     <string name="update_name_end">Article, does not meet the conditions for modifying the name!</string>
 
@@ -56,13 +59,13 @@
 
     <string name="update_name_success">The current file name has been modified!</string>
 
-    <string name="tips">tips</string>
+    <string name="tips">Tips</string>
 
     <string name="create_file">New File</string>
 
     <string name="create_file_box">New Folder</string>
 
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
 
     <string name="inout_str">Please reconfirm the input</string>
 
@@ -76,4 +79,13 @@
 
     <string name="copy_current">Please do not put the file with the same name in this directory！</string>
 
+    <string name="create_files">Create File </string>
+
+    <string name="create_filebox">Create Folder </string>
+
+    <string name="paste">paste</string>
+
+    <string name="no_data">No Find Data</string>
+
+    <string name="re_name">Rename</string>
 </resources>
